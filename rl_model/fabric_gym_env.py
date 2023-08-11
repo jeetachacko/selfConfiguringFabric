@@ -1,7 +1,8 @@
+import gym
 from gym.spaces.discrete import Discrete
 from rl_model.agent import Agent
 from rl_model.fabric_custom_env import Fabric
-#from utils.logger import configure_logger, get_logger
+from utils.logger import configure_logger, get_logger
 import config
 import time
 from config import (
@@ -11,7 +12,6 @@ from config import (
 )
 from copy import copy
 from evaluation_function import objective_achieved, total_reward
-import gym
 from gym import spaces
 import numpy as np
 
@@ -22,9 +22,10 @@ class FabricEnv(gym.Env):
         return self.agent.position
 
     def __init__(self, send_result=False, fixed_throughput=None, agent_random_start=True) -> None:
+        print(f"fabric_gym_env.py: __init__()")
         super(FabricEnv, self).__init__()
 
-        #self.logger = get_logger()
+        self.logger = get_logger()
         
         self.env = Fabric()
         self.agent = Agent(random_start=agent_random_start)
@@ -49,7 +50,9 @@ class FabricEnv(gym.Env):
         }
 
     # reset() called at the beginning of an episode, it returns an observation
+    #def reset(self):
     def reset(self):
+        print(f"fabric_gym_env.py: reset()")
         set_dqn_expected_throughput(self.fixed_throughput)
         self.env.set_tps(config.EXPECTED_THROUGHPUT)
         self.episode_step = 0
@@ -80,6 +83,7 @@ class FabricEnv(gym.Env):
     step(action) called to take an action with the environment, it returns the next observation, the immediate reward, whether the episode is over and additional information
     """
     def step(self, action):
+        print(f"fabric_gym_env.py: step()")
         self.episode_step += 1
         if self.env.needs_rebuild():
             self.logger.info(f"=== REBUILDING NETWORK BEFORE CONTINUING ===")
@@ -144,7 +148,9 @@ class FabricEnv(gym.Env):
         return np.array(self.env.current_state).astype(np.float32), reward, done, info
 
     def close(self):
+        print(f"fabric_gym_env.py: close()")
         pass
     
     def get_results(self):
+        print(f"fabric_gym_env.py: get_results()")
         return self.results

@@ -8,7 +8,7 @@ observation space?
 from subprocess import TimeoutExpired
 from utils.caliper_report_parser import parse_caliper_log
 #from utils.database import MongoConnector
-#from utils.logger import get_logger
+from utils.logger import get_logger
 from config import (
     REBUILD_LIMIT,
     TX_DURATION,
@@ -28,7 +28,8 @@ class Fabric:
     """
 
     def __init__(self):
-        #self.logger = get_logger()
+        print(f"fabric_custom_env.py: init()")
+        self.logger = get_logger()
         self.current_state = ()
         self.q_table = {}
         #self.db = MongoConnector()
@@ -37,52 +38,68 @@ class Fabric:
 
     # setting send rate
     def set_tps(self, tps):
+        print(f"fabric_custom_env.py: set_tps()")
         self.target_tps = tps
         assets = math.ceil(tps * 2)
-        self.logger.info(f"=== UPDATE CALIPER CONFIG WITH VALUE {tps} {assets} ===")
-        update_process = subprocess.Popen(
-            ["sudo", "./scripts/k8s-update-caliper-config.sh", str(tps), str(assets)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-        )
-        _, err = update_process.communicate()
-        self.logger.debug(f"error while updating tps {err}")
+        print(f"=== UPDATE CALIPER CONFIG WITH VALUE {tps} {assets} ===")
+        rc = subprocess.call(["./scripts/k8s-update-caliper-config.sh", str(tps)])
+        #self.logger.info(f"=== UPDATE CALIPER CONFIG WITH VALUE {tps} {assets} ===")
+        #update_process = subprocess.Popen(
+        #    ["sudo", "./scripts/k8s-update-caliper-config.sh", str(tps), str(assets)],
+        #    stdout=subprocess.PIPE,
+        #    stderr=subprocess.DEVNULL,
+        #)
+        #_, err = update_process.communicate()
+        #self.logger.debug(f"error while updating tps {err}")
 
     # rebuild fabric
     def rebuild_network(self, block_size):
-        self.logger.info(f"=== REBUILDING NETWORK ===")
+        print(f"fabric_custom_env.py: rebuild_network()")
+        print(f"=== REBUILDING NETWORK ===")
         if block_size is 10:
-            command = f"./scripts/k8s-rebuild-network.sh && ./scripts/k8s-execute-caliper.sh "
-        else:
-            command = f"./scripts/k8s-rebuild-network.sh && ./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh "
+            rc = subprocess.call("./scripts/k8s-rebuild-network.sh && ./scripts/k8s-execute-caliper.sh", shell=True)
 
-        rebuild_process = subprocess.Popen(
-            [command],
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-        )
-        _, err = rebuild_process.communicate()
-        self.logger.debug(f"error while rebuilding network {err}")
+        else:
+            rc = subprocess.call("./scripts/k8s-rebuild-network.sh")
+            rc = subprocess.call(["./scripts/k8s-updateconfig.sh", str(block_size)])
+            rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
+        #self.logger.info(f"=== REBUILDING NETWORK ===")
+        #if block_size is 10:
+        #    command = f"./scripts/k8s-rebuild-network.sh && ./scripts/k8s-execute-caliper.sh "
+        #else:
+        #    command = f"./scripts/k8s-rebuild-network.sh && ./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh "
+
+        #rebuild_process = subprocess.Popen(
+        #    [command],
+        #    shell=True,
+        #    stdout=subprocess.PIPE,
+        #    stderr=subprocess.DEVNULL,
+        #)
+        #_, err = rebuild_process.communicate()
+        #self.logger.debug(f"error while rebuilding network {err}")
 
         self.update_current_state(block_size)
         self.tx_submitted = 0
 
     # update fabric config
     def update_env_config(self, block_size, fixed_config=True):
-        command = f"./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh "
-        update_process = subprocess.Popen(
-            [command],
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-        )
+        print(f"fabric_custom_env.py: update_env_config()")
+        rc = subprocess.call(["./scripts/k8s-updateconfig.sh", str(block_size)])
+        rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
+        #rc = subprocess.call("./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh ", shell=True)
+        #command = f"./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh "
+        #update_process = subprocess.Popen(
+        #    [command],
+        #    shell=True,
+        #    stdout=subprocess.PIPE,
+        #    stderr=subprocess.DEVNULL,
+        #)
         
         try:
             # combine update and benchmark
-            _, err = update_process.communicate()
+            #_, err = update_process.communicate()
             self.update_current_state(block_size, fixed_config)
-            self.logger.debug(f"error during process {err}")
+            #self.logger.debug(f"error during process {err}")
         except TimeoutExpired:
             update_process.kill()
             # benchmark_process.kill()
@@ -93,8 +110,9 @@ class Fabric:
 
     # parse the caliper result
     def update_current_state(self, block_size, fixed_config=True):
+        print(f"fabric_custom_env.py: update_current_state()")
         # TODO change the keyword for different transaction/chaincode. Provide multiple keywords for multiple benchmarks.
-        raw_states = parse_caliper_log(['Random']) # Transaction keyword
+        raw_states = parse_caliper_log(['common']) # Transaction keyword
         print(f"===== THE STATE IS {raw_states} =====")
         
         try:
@@ -137,13 +155,14 @@ class Fabric:
         )
 
     def needs_rebuild(self):
+        print(f"fabric_custom_env.py: needs_rebuild()")
         return (
             self.tx_submitted >= REBUILD_LIMIT or self.current_state[0] == 0
         )  # if throughput is 0, something is wrong
 
-    def save_state_to_db(self, size, raw):
-        config = {
-            "target_tps": self.target_tps,
-            "batch_size": size,
-        }
-        self.db.insertData(config, raw)
+    #def save_state_to_db(self, size, raw):
+    #    config = {
+    #        "target_tps": self.target_tps,
+    #        "batch_size": size,
+    #    }
+    #    self.db.insertData(config, raw)
