@@ -19,22 +19,23 @@ load_dotenv()
 #TEST_NETWORK_EXTENDED_DIR = os.getenv("TEST_NETWORK_EXTENDED_DIR")
 
 # Tx duration in Hyperledger caliper
-TX_DURATION = 10 # caliper tx duration - TODO check with caliper config
+#TX_DURATION = 10 # caliper tx duration - TODO check with caliper config
 
 # "reward vs penalty?, rather we can assign score for every agent action (changing configuration)"
 MOVE_PENALTY = 1 
-THROUGHPUT_REWARD_WEIGHT = 1.5
-SUCCESS_REWARD_WEIGHT = 1
-LATENCY_REWARD_WEIGHT = 1.2
+#THROUGHPUT_REWARD_WEIGHT = 1.5
+#SUCCESS_REWARD_WEIGHT = 1
+#LATENCY_REWARD_WEIGHT = 1.2
 
 # if action picked is not possible to execute, give penalty
-INVALID_ACTION_PENALTY = 99
+#INVALID_ACTION_PENALTY = 99
 
 # if objective achieved, multiply reward by this value.
 OBJECTIVE_REWARD_MULTIPLIER=5
 
+
 # training config
-EXPECTED_THROUGHPUT = 10 # default expected throughput
+EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
 MAXIMUM_STEPS_PER_EPISODE = 30
 NUMBER_OF_EPISODES = 4
 MAXIMUM_STEPS_PER_EPISODE = 2
@@ -56,7 +57,7 @@ FIXED_THROUGHPUT = None
 #SPACE_REGION = os.getenv("SPACE_REGION")
 
 # rebuild transaction limit
-REBUILD_LIMIT = 50000
+#REBUILD_LIMIT = 50000
 
 """
 === DQN CONFIG ===
@@ -70,15 +71,23 @@ batch_timeout = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,
 snapshot_interval_size = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
 admission_rate = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
 
-discrete_action_space = possible_block_size
+discrete_action_space = max_message_count
 
-DQN_SIZE = 800 # max throughput TODO check with saturation_check.py
+#DQN_SIZE = 800 # max throughput TODO check with saturation_check.py
 
+SET_TPS = 100
+MIN_TPS = 50
+MAX_TPS = 300
+VAR_TPS = 50
 
-def set_dqn_expected_throughput(fixed_throughput):
+def get_tps_value():
+    SET_TPS = random.randrange(MIN_TPS, MAX_TPS, VAR_TPS) or 100
+    return SET_TPS
+
+""" def set_dqn_expected_throughput(fixed_throughput):
     global EXPECTED_THROUGHPUT
     if fixed_throughput:
         EXPECTED_THROUGHPUT = fixed_throughput
     else:
         EXPECTED_THROUGHPUT = random.randrange(50, DQN_SIZE, 50) or 10
-    return EXPECTED_THROUGHPUT
+    return EXPECTED_THROUGHPUT """

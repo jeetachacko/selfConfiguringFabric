@@ -2,13 +2,14 @@ import gym
 from gym.spaces.discrete import Discrete
 from rl_model.agent import Agent
 from rl_model.fabric_custom_env import Fabric
-from utils.logger import configure_logger, get_logger
+#from utils.logger import configure_logger, get_logger
 import config
 import time
+import wandb
 from config import (
-    INVALID_ACTION_PENALTY, MAXIMUM_STEPS_PER_EPISODE, OBJECTIVE_REWARD_MULTIPLIER,
-    discrete_action_space,
-    set_dqn_expected_throughput,
+    MAXIMUM_STEPS_PER_EPISODE, OBJECTIVE_REWARD_MULTIPLIER,
+    discrete_action_space, get_tps_value,
+    #set_dqn_expected_throughput,
 )
 from copy import copy
 from utils.evaluation_function import objective_achieved, total_reward
@@ -25,7 +26,7 @@ class FabricEnv(gym.Env):
         print(f"fabric_gym_env.py: __init__()")
         super(FabricEnv, self).__init__()
 
-        self.logger = get_logger()
+        #self.logger = get_logger()
         
         self.env = Fabric()
         self.agent = Agent(random_start=agent_random_start)
@@ -34,7 +35,7 @@ class FabricEnv(gym.Env):
         self.fixed_throughput = fixed_throughput
         # we need to use the single discrete actions
         self.action_space = Discrete(len(discrete_action_space))
-        self.observation_space = spaces.Box(low=0, high=np.inf, shape=(3,))
+        self.observation_space = spaces.Box(low=0, high=np.inf, shape=(2,))
 
         
         # record and aggregrate results for informational purposes.
@@ -53,8 +54,8 @@ class FabricEnv(gym.Env):
     #def reset(self):
     def reset(self):
         print(f"fabric_gym_env.py: reset()")
-        set_dqn_expected_throughput(self.fixed_throughput)
-        self.env.set_tps(config.EXPECTED_THROUGHPUT)
+        #set_dqn_expected_throughput(self.fixed_throughput)
+        self.env.set_tps(get_tps_value())
         self.episode_step = 0
 
         self.env.rebuild_network(self.agent_pos)
@@ -68,7 +69,7 @@ class FabricEnv(gym.Env):
 
         self.results["episode_rewards"].append(0)
         self.results["steps_per_episode"].append(0)
-        self.results["expected_throughputs"].append(config.EXPECTED_THROUGHPUT)
+        #self.results["expected_throughputs"].append(config.EXPECTED_THROUGHPUT)
         self.results["initial_states"].append(self.env.current_state)
         self.results["worst_states"].append(self.env.current_state)
         self.results["best_states"].append(self.env.current_state)
@@ -85,26 +86,31 @@ class FabricEnv(gym.Env):
     def step(self, action):
         print(f"fabric_gym_env.py: step()")
         self.episode_step += 1
-        if self.env.needs_rebuild():
-            self.logger.info(f"=== REBUILDING NETWORK BEFORE CONTINUING ===")
-            self.logger.info(
-                f"=== state before rebuilding: {self.env.current_state} ==="
-            )
+        #if self.env.needs_rebuild():
+            #self.logger.info(f"=== REBUILDING NETWORK BEFORE CONTINUING ===")
+        #    print(f"=== REBUILDING NETWORK BEFORE CONTINUING ===")
+        #    self.logger.info(
+        #        f"=== state before rebuilding: {self.env.current_state} ==="
+        #    )
             # rebuild_pinalty = self.env.current_state
-            self.env.rebuild_network(self.agent_pos)
+        self.env.rebuild_network(self.agent_pos)
             # rebuild_pinalty = total_reward(rebuild_pinalty, self.env.current_state) + 1
-            self.logger.info(
-                f"=== state after rebuilding: {self.env.current_state} ==="
-            )
+            #self.logger.info(
+            #    f"=== state after rebuilding: {self.env.current_state} ==="
+            #)
+        #    print(f"=== state after rebuilding: {self.env.current_state} ===")
 
-        self.logger.info(
-            f"for position {self.agent.position}, picked action {action} -> {discrete_action_space[action]}"
-        )
+        # self.logger.info(
+        #     f"for position {self.agent.position}, picked action {action} -> {discrete_action_space[action]}"
+        # )
+        print(f"for position {self.agent.position}, picked action {action} -> {discrete_action_space[action]}")
+        wandb.log({'max_message_count': discrete_action_space[action]})
 
         # choosing block size
         self.agent.move(discrete_action_space[action])
 
-        self.logger.info(f"previous state = {self.env.current_state}")
+        #self.logger.info(f"previous state = {self.env.current_state}")
+        print(f"previous state = {self.env.current_state}")
 
         prev_state = copy(self.env.current_state)
 
@@ -113,13 +119,16 @@ class FabricEnv(gym.Env):
 
         # calculate the reward
         reward = total_reward(prev_state, self.env.current_state)
+        
 
-        self.logger.info(f"reward obtained = {reward}")
+        #self.logger.info(f"reward obtained = {reward}")
+        print(f"reward obtained = {reward}")
 
         # episode is done if max steps are exhausted or objective achieved
         done = objective_achieved(self.env.current_state, self.initial_state)
         if done:
-            self.logger.info(f"=== Objective Achieved! ===")
+            #self.logger.info(f"=== Objective Achieved! ===")
+            print(f"=== Objective Achieved! ===")
             reward = reward*OBJECTIVE_REWARD_MULTIPLIER
 
         self.results["episode_rewards"][self.episode_count] += reward
@@ -143,6 +152,9 @@ class FabricEnv(gym.Env):
         ):
             self.results["worst_states"][self.episode_count] = self.env.current_state
 
+
+
+        wandb.log({'reward': reward})
         # no info passed for next step. should we pass results instead?
         info = {}
         return np.array(self.env.current_state).astype(np.float32), reward, done, info

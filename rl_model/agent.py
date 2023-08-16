@@ -2,7 +2,7 @@
 agent should choose from the available action, send it to environment to receive updated state and benchmarking result then calculate evaluation function result
 """
 import random
-from config import possible_block_size
+from config import max_message_count
 from enum import Enum
 
 
@@ -14,7 +14,7 @@ class PossibleAction(Enum):
 class Agent:
     def __init__(self, random_start=True):
         if random_start:
-            self.block_size_choice = random.choice(possible_block_size)
+            self.block_size_choice = random.choice(max_message_count)
         else:
             self.block_size_choice = 10
 
@@ -24,8 +24,8 @@ class Agent:
 
     # get available actions based on state
     def available_actions(self):
-        max_size = self.block_size_choice == possible_block_size[-1]
-        min_size = self.block_size_choice == possible_block_size[0]
+        max_size = self.block_size_choice == max_message_count[-1]
+        min_size = self.block_size_choice == max_message_count[0]
 
         possible_actions = list(PossibleAction)
         
@@ -49,8 +49,8 @@ class Agent:
 
     # one step from one possible action to neighbour action
     def step(self, choice):
-        size_idx = possible_block_size.index(self.block_size_choice)
+        size_idx = max_message_count.index(self.block_size_choice)
         if choice == PossibleAction.INCREASE_BLOCK_SIZE:
-            self.block_size_choice = possible_block_size[size_idx + 1]
+            self.block_size_choice = max_message_count[size_idx + 1]
         elif choice == PossibleAction.DECREASE_BLOCK_SIZE:
-            self.block_size_choice = possible_block_size[size_idx - 1]
+            self.block_size_choice = max_message_count[size_idx - 1]

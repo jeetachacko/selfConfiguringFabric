@@ -52,8 +52,6 @@ def run_scf():
         callback=WandbCallback(model_save_path=f"{model_dir}/{run.id}", verbose=2,),
     )
 
-    #wandb.log({"accuracy": acc, "loss": loss})
-
 
     # Save the agent
     model.save("model_dir")
