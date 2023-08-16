@@ -10,13 +10,13 @@ load_dotenv()
 === GENERAL CONFIG ===
 """
 
-ALGORITHM = os.getenv("ALGORITHM")
+#ALGORITHM = os.getenv("ALGORITHM")
 
 # mongodb settings
-MONGODB_HOST = os.getenv("MONGODB_HOST")
+#MONGODB_HOST = os.getenv("MONGODB_HOST")
 
 # env config
-TEST_NETWORK_EXTENDED_DIR = os.getenv("TEST_NETWORK_EXTENDED_DIR")
+#TEST_NETWORK_EXTENDED_DIR = os.getenv("TEST_NETWORK_EXTENDED_DIR")
 
 # Tx duration in Hyperledger caliper
 TX_DURATION = 10 # caliper tx duration - TODO check with caliper config
@@ -27,8 +27,8 @@ THROUGHPUT_REWARD_WEIGHT = 1.5
 SUCCESS_REWARD_WEIGHT = 1
 LATENCY_REWARD_WEIGHT = 1.2
 
-# if action picked is not possible to execute, give pinalty
-INVALID_ACTION_PINALTY = 99
+# if action picked is not possible to execute, give penalty
+INVALID_ACTION_PENALTY = 99
 
 # if objective achieved, multiply reward by this value.
 OBJECTIVE_REWARD_MULTIPLIER=5
@@ -36,16 +36,24 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 # training config
 EXPECTED_THROUGHPUT = 10 # default expected throughput
 MAXIMUM_STEPS_PER_EPISODE = 30
+NUMBER_OF_EPISODES = 4
+MAXIMUM_STEPS_PER_EPISODE = 2
+NUMBER_OF_EPISODES = 4
+LEARNING_RATE = 0.0003
+LEARNING_STARTS = 3
+EXPLORATION_FRACTION = 0.2
+FIXED_THROUGHPUT = None
+
 
 # notification config
-CHAT_ID = os.getenv("CHAT_ID")
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+#CHAT_ID = os.getenv("CHAT_ID")
+#BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # digital ocean spaces settings
-SPACE_KEY = os.getenv("SPACE_KEY")
-SPACE_SECRET = os.getenv("SPACE_SECRET")
-SPACE_NAME = os.getenv("SPACE_NAME")
-SPACE_REGION = os.getenv("SPACE_REGION")
+#SPACE_KEY = os.getenv("SPACE_KEY")
+#SPACE_SECRET = os.getenv("SPACE_SECRET")
+#SPACE_NAME = os.getenv("SPACE_NAME")
+#SPACE_REGION = os.getenv("SPACE_REGION")
 
 # rebuild transaction limit
 REBUILD_LIMIT = 50000
@@ -55,6 +63,12 @@ REBUILD_LIMIT = 50000
 """
 # possible value combination for action space (see PossibleAction)
 possible_block_size = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
+max_message_count = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
+absolute_max_bytes = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
+preferred_max_bytes = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
+batch_timeout = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
+snapshot_interval_size = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
+admission_rate = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
 
 discrete_action_space = possible_block_size
 

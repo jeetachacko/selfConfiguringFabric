@@ -6,12 +6,12 @@ from utils.logger import configure_logger, get_logger
 import config
 import time
 from config import (
-    INVALID_ACTION_PINALTY, MAXIMUM_STEPS_PER_EPISODE, OBJECTIVE_REWARD_MULTIPLIER,
+    INVALID_ACTION_PENALTY, MAXIMUM_STEPS_PER_EPISODE, OBJECTIVE_REWARD_MULTIPLIER,
     discrete_action_space,
     set_dqn_expected_throughput,
 )
 from copy import copy
-from evaluation_function import objective_achieved, total_reward
+from utils.evaluation_function import objective_achieved, total_reward
 from gym import spaces
 import numpy as np
 

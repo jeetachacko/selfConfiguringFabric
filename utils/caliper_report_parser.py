@@ -35,6 +35,17 @@ def parse_caliper_log(keywords):
             value = str(value)
             values = value.split('|')
             print(f"LOG EXTRACTED VALUE {value}")
+            duration = (float(values[2].strip()) + float(values[3].strip())) / float(values[8].strip())
+            print(f"LOG DURATION {duration}")
+            successthroughput = float(values[2].strip()) / duration
+            print(f"LOG SUCCESS THROUGHPUT {successthroughput}")
+            wandb.log({"success": {'success': float(values[2].strip())}})
+            wandb.log({"fail": {'fail': float(values[3].strip())}})
+            wandb.log({"send_rate": {'send_rate': float(values[4].strip())}})
+            wandb.log({"avg_latency": {'avg_latency': float(values[7].strip())}})
+            wandb.log({"throughput": {'throughput': float(values[8].strip())}})
+            wandb.log({"successthroughput": {'successthroughput': successthroughput}})
+
             states.append({
                 'name': values[1],
                 'success': float(values[2].strip()),
@@ -44,15 +55,8 @@ def parse_caliper_log(keywords):
                 'min_latency': float(values[6].strip()),
                 'avg_latency': float(values[7].strip()),
                 'throughput': float(values[8].strip()),
+                'successthroughput': float(successthroughput),
             })
-            duration = (float(values[2].strip()) + float(values[3].strip())) / float(values[8].strip())
-            successthroughput = float(values[2].strip()) / duration
-            wandb.log({"success": {'success': float(values[2].strip())}})
-            wandb.log({"fail": {'fail': float(values[3].strip())}})
-            wandb.log({"send_rate": {'send_rate': float(values[4].strip())}})
-            wandb.log({"avg_latency": {'avg_latency': float(values[7].strip())}})
-            wandb.log({"throughput": {'throughput': float(values[8].strip())}})
-            wandb.log({"successthroughput": {'successthroughput': successthroughput}})
         except Exception as e:
             print(f"log parsing error {e}")
             states.append({
