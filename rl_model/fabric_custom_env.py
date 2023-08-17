@@ -35,23 +35,23 @@ class Fabric:
         #self.db = MongoConnector()
         self.target_tps = 0
         self.tx_submitted = 0
-        rc = subprocess.call("./scripts/copy_config_init.sh")
-        rc = subprocess.call("./scripts/k8s-rebuild-network.sh")
-        rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
-        rc = subprocess.call("./scripts/copy_config_no_init.sh")
+        #rc = subprocess.call("./scripts/copy_config_init.sh")
+        #rc = subprocess.call("./scripts/k8s-rebuild-network.sh")
+        #rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
+        #rc = subprocess.call("./scripts/copy_config_no_init.sh")
     
      
 
     # setting send rate
-    def set_tps(self, tps):
-        print(f"fabric_custom_env.py: set_tps()")
+    #def set_tps(self, tps):
+        #print(f"fabric_custom_env.py: set_tps()")
     #     self.target_tps = tps
     #     assets = math.ceil(tps * 2)
-        print(f"=== NEW CALIPER ROUND ===")
-        rc = subprocess.call("./scripts/kill_caliper_processes.sh")
-        rc = subprocess.call(["./scripts/k8s-update-caliper-config.sh", str(tps)])
-        subprocess.Popen(["./scripts/k8s-execute-caliper.sh"])
-        rc = subprocess.call(["sleep 20s"])
+        #print(f"=== NEW CALIPER ROUND ===")
+        #rc = subprocess.call("./scripts/kill_caliper_processes.sh")
+        #rc = subprocess.call(["./scripts/k8s-update-caliper-config.sh", str(tps)])
+        #subprocess.Popen(["./scripts/k8s-execute-caliper.sh"])
+        #rc = subprocess.call(["sleep 20s"])
         #rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
         #self.logger.info(f"=== UPDATE CALIPER CONFIG WITH VALUE {tps} {assets} ===")
         #update_process = subprocess.Popen(

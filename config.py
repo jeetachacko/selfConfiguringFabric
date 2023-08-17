@@ -38,8 +38,8 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
 MAXIMUM_STEPS_PER_EPISODE = 30
 NUMBER_OF_EPISODES = 4
-MAXIMUM_STEPS_PER_EPISODE = 2
-NUMBER_OF_EPISODES = 4
+#MAXIMUM_STEPS_PER_EPISODE = 2
+#NUMBER_OF_EPISODES = 4
 LEARNING_RATE = 0.0003
 LEARNING_STARTS = 3
 EXPLORATION_FRACTION = 0.2
@@ -75,14 +75,14 @@ discrete_action_space = max_message_count
 
 #DQN_SIZE = 800 # max throughput TODO check with saturation_check.py
 
-SET_TPS = 100
-MIN_TPS = 50
-MAX_TPS = 300
-VAR_TPS = 50
+#SET_TPS = 100
+#MIN_TPS = 50
+#MAX_TPS = 300
+#VAR_TPS = 50
 
-def get_tps_value():
-    SET_TPS = random.randrange(MIN_TPS, MAX_TPS, VAR_TPS) or 100
-    return SET_TPS
+#def get_tps_value():
+    #SET_TPS = random.randrange(MIN_TPS, MAX_TPS, VAR_TPS) or 100
+    #return SET_TPS
 
 """ def set_dqn_expected_throughput(fixed_throughput):
     global EXPECTED_THROUGHPUT

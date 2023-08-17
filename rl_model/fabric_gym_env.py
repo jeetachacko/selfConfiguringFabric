@@ -8,7 +8,7 @@ import time
 import wandb
 from config import (
     MAXIMUM_STEPS_PER_EPISODE, OBJECTIVE_REWARD_MULTIPLIER,
-    discrete_action_space, get_tps_value,
+    discrete_action_space, #get_tps_value,
     #set_dqn_expected_throughput,
 )
 from copy import copy
@@ -55,7 +55,7 @@ class FabricEnv(gym.Env):
     def reset(self):
         print(f"fabric_gym_env.py: reset()")
         #set_dqn_expected_throughput(self.fixed_throughput)
-        self.env.set_tps(get_tps_value())
+        #self.env.set_tps(get_tps_value())
         self.episode_step = 0
 
         self.env.rebuild_network(self.agent_pos)
