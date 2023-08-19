@@ -63,15 +63,14 @@ FIXED_THROUGHPUT = None
 === DQN CONFIG ===
 """
 # possible value combination for action space (see PossibleAction)
-possible_block_size = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
-max_message_count = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
-absolute_max_bytes = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
-preferred_max_bytes = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
-batch_timeout = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
-snapshot_interval_size = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
-admission_rate = [10,50,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,]
+max_message_count = [10,50,100,200,400]
+preferred_max_bytes = [1,2,4,16]
+batch_timeout = [0.5,1,2]
+snapshot_interval_size = [16,32,64]
+admission_rate = [50,100,200,300]
 
-discrete_action_space = max_message_count
+#discrete_action_space = max_message_count
+discrete_action_space = list(product(max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, admission_rate))
 
 #DQN_SIZE = 800 # max throughput TODO check with saturation_check.py
 

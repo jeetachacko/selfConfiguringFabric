@@ -1,5 +1,6 @@
 import gym
 from gym.spaces.discrete import Discrete
+from gym.spaces.multi_discrete import MultiDiscrete
 from rl_model.agent import Agent
 from rl_model.fabric_custom_env import Fabric
 #from utils.logger import configure_logger, get_logger
@@ -35,7 +36,8 @@ class FabricEnv(gym.Env):
         self.fixed_throughput = fixed_throughput
         # we need to use the single discrete actions
         self.action_space = Discrete(len(discrete_action_space))
-        self.observation_space = spaces.Box(low=0, high=np.inf, shape=(2,))
+        #self.action_space = MultiDiscrete(len(discrete_action_space))
+        self.observation_space = spaces.Box(low=0, high=np.inf, shape=(7,))
 
         
         # record and aggregrate results for informational purposes.
@@ -74,7 +76,7 @@ class FabricEnv(gym.Env):
         self.results["worst_states"].append(self.env.current_state)
         self.results["best_states"].append(self.env.current_state)
         self.results["best_configs"].append(
-            {"block_size": self.agent_pos,}
+            {"max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3], "admission_rate": self.agent_pos[4]}
         )
 
         initial_obs = self.env.current_state
@@ -104,7 +106,13 @@ class FabricEnv(gym.Env):
         #     f"for position {self.agent.position}, picked action {action} -> {discrete_action_space[action]}"
         # )
         print(f"for position {self.agent.position}, picked action {action} -> {discrete_action_space[action]}")
-        wandb.log({'max_message_count': discrete_action_space[action]})
+        wandb.log({'max_message_count': self.agent_pos[0]})
+        wandb.log({'preferred_max_bytes': self.agent_pos[1]})
+        wandb.log({'batch_timeout': self.agent_pos[2]})
+        wandb.log({'snapshot_interval_size': self.agent_pos[3]})
+        wandb.log({'admission_rate': self.agent_pos[4]})
+        wandb.log({'discrete_action_space': discrete_action_space[action]})
+        
 
         # choosing block size
         self.agent.move(discrete_action_space[action])
@@ -142,7 +150,7 @@ class FabricEnv(gym.Env):
         ):
             self.results["best_states"][self.episode_count] = self.env.current_state
             self.results["best_configs"][self.episode_count] = {
-                "block_size": self.agent_pos,
+                "max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3], "admission_rate": self.agent_pos[4]
             }
         if (
             total_reward(
