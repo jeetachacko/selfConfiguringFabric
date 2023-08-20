@@ -1,4 +1,5 @@
 import gym
+import os
 from gym.spaces.discrete import Discrete
 from gym.spaces.multi_discrete import MultiDiscrete
 from rl_model.agent import Agent
@@ -58,7 +59,11 @@ class FabricEnv(gym.Env):
         print(f"fabric_gym_env.py: reset()")
         #set_dqn_expected_throughput(self.fixed_throughput)
         #self.env.set_tps(get_tps_value())
-        self.episode_step = 0
+        #self.episode_step = 0
+        try:
+            self.episode_step = self.episode_step
+        except:
+            self.episode_step = 0
 
         self.env.rebuild_network(self.agent_pos, self.episode_step)
         #self.env.current_state = (0, 0, 0, 0, 0, 0, 0)
@@ -88,6 +93,9 @@ class FabricEnv(gym.Env):
     """
     def step(self, action):
         print(f"fabric_gym_env.py: step()")
+        print(f"self.episode_count: {self.episode_count}")
+        print(f"self.episode_step: {self.episode_step}")
+       
         self.episode_step += 1
         #if self.env.needs_rebuild():
             #self.logger.info(f"=== REBUILDING NETWORK BEFORE CONTINUING ===")

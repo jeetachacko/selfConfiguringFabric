@@ -60,7 +60,8 @@ def run_scf():
     # Save the agent
     model.save("model_dir")
 
-    evaluate_policy(model, env, n_eval_episodes=10, render=True)
+    #mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10, render=True)
+    #print(f"mean_reward: {mean_reward:.2f} +/- {std_reward:.2f}")
     run.finish()
 
 try:
