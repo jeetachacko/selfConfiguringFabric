@@ -34,12 +34,12 @@ class FabricEnv(gym.Env):
         
         self.send_result = send_result
         self.fixed_throughput = fixed_throughput
+        #self.current_state = (0, 0, 0, 0, 0, 0, 0)
         # we need to use the single discrete actions
         self.action_space = Discrete(len(discrete_action_space))
         #self.action_space = MultiDiscrete(len(discrete_action_space))
         self.observation_space = spaces.Box(low=0, high=np.inf, shape=(6,))
 
-        
         # record and aggregrate results for informational purposes.
         self.send_result = send_result
         self.results = {
@@ -60,7 +60,8 @@ class FabricEnv(gym.Env):
         #self.env.set_tps(get_tps_value())
         self.episode_step = 0
 
-        self.env.rebuild_network(self.agent_pos)
+        self.env.rebuild_network(self.agent_pos, self.episode_step)
+        #self.env.current_state = (0, 0, 0, 0, 0, 0, 0)
         self.initial_state = self.env.current_state
         
         # count the episodes
@@ -95,7 +96,7 @@ class FabricEnv(gym.Env):
         #        f"=== state before rebuilding: {self.env.current_state} ==="
         #    )
             # rebuild_pinalty = self.env.current_state
-        self.env.rebuild_network(self.agent_pos)
+        #self.env.rebuild_network(self.agent_pos)
             # rebuild_pinalty = total_reward(rebuild_pinalty, self.env.current_state) + 1
             #self.logger.info(
             #    f"=== state after rebuilding: {self.env.current_state} ==="
@@ -106,11 +107,7 @@ class FabricEnv(gym.Env):
         #     f"for position {self.agent.position}, picked action {action} -> {discrete_action_space[action]}"
         # )
         print(f"for position {self.agent.position}, picked action {action} -> {discrete_action_space[action]}")
-        wandb.log({'max_message_count': self.agent_pos[0]})
-        wandb.log({'preferred_max_bytes': self.agent_pos[1]})
-        wandb.log({'batch_timeout': self.agent_pos[2]})
-        wandb.log({'snapshot_interval_size': self.agent_pos[3]})
-        wandb.log({'discrete_action_space': discrete_action_space[action]})
+        
         
 
         # choosing block size
@@ -122,17 +119,18 @@ class FabricEnv(gym.Env):
         prev_state = copy(self.env.current_state)
 
         # update environment configuration & state
-        self.env.update_env_config(self.agent_pos)
+        self.env.update_env_config(self.agent_pos, self.episode_step)
 
         # calculate the reward
-        reward = total_reward(prev_state, self.env.current_state)
-        
+        reward = total_reward(self.env.current_state)
+
+       
 
         #self.logger.info(f"reward obtained = {reward}")
         print(f"reward obtained = {reward}")
 
         # episode is done if max steps are exhausted or objective achieved
-        done = objective_achieved(self.env.current_state, self.initial_state)
+        done = objective_achieved(self.env.current_state)
         if done:
             #self.logger.info(f"=== Objective Achieved! ===")
             print(f"=== Objective Achieved! ===")
@@ -141,27 +139,35 @@ class FabricEnv(gym.Env):
         self.results["episode_rewards"][self.episode_count] += reward
         self.results["steps_per_episode"][self.episode_count] += 1
         # update best state for positive reward (0 is also considered positive due to move penalty)
-        if (
-            total_reward(
-                self.results["best_states"][self.episode_count], self.env.current_state
-            )
-            >= 0
-        ):
+        # if (
+        #     total_reward(
+        #         self.results["best_states"][self.episode_count], self.env.current_state
+        #     )
+        #     >= 0
+        # ):
+        if (self.env.current_state[0] > self.results["best_states"][self.episode_count][0]):
             self.results["best_states"][self.episode_count] = self.env.current_state
             self.results["best_configs"][self.episode_count] = {
                 "max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3]
             }
-        if (
-            total_reward(
-                self.results["worst_states"][self.episode_count], self.env.current_state
-            )
-            < 0
-        ):
+        # if (
+        #     total_reward(
+        #         self.results["worst_states"][self.episode_count], self.env.current_state
+        #     )
+        #     < 0
+        # ):
+        if (self.env.current_state[0] < self.results["worst_states"][self.episode_count][0]):
             self.results["worst_states"][self.episode_count] = self.env.current_state
 
 
-
-        wandb.log({'reward': reward})
+        #Reward is for previous step but variables are for the current step
+        wandb.log({'max_message_count': self.agent_pos[0]}, step=self.episode_step)
+        wandb.log({'preferred_max_bytes': self.agent_pos[1]}, step=self.episode_step)
+        wandb.log({'batch_timeout': self.agent_pos[2]}, step=self.episode_step)
+        wandb.log({'snapshot_interval_size': self.agent_pos[3]}, step=self.episode_step)
+        wandb.log({'discrete_action_space': discrete_action_space[action]}, step=self.episode_step)
+        wandb.log({'reward': reward}, step=self.episode_step)
+        wandb.log({'episode_number': self.episode_count}, step=self.episode_step)
         # no info passed for next step. should we pass results instead?
         info = {}
         return np.array(self.env.current_state).astype(np.float32), reward, done, info

@@ -6,12 +6,15 @@ sed -i "s/.*pval:.*/    pval: $2/" /home/ubuntu/hll3_opennebula/fabric/channel-u
 sed -i "s/.*tval:.*/    tval: $3s/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
 sed -i "s/.*sval:.*/    sval: $4/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
 sed -i "s/.*tps.*/            tps: $5/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/config.yaml
+sed -i "s/.*tps.*/            tps: $5/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/config_no_init.yaml
+sed -i "s/.*tps.*/            tps: $5/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/config_init.yaml
+sed -i "0,/.*tps.*/s/.*tps.*/            tps: 100/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/config_init.yaml
 
 cd /home/ubuntu/hll3_opennebula
 
 ./scripts/network_update.sh
 
-sleep 10s
+#sleep 10s
 >/home/ubuntu/hll3_opennebula/check.txt
 
 while [ -f /home/ubuntu/hll3_opennebula/check.txt ]

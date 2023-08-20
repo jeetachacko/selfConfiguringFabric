@@ -11,7 +11,7 @@ cd /home/ubuntu/hll3_opennebula
 
 ./scripts/network_update.sh
 
-sleep 10s
+#sleep 10s
 >/home/ubuntu/hll3_opennebula/check.txt
 
 while [ -f /home/ubuntu/hll3_opennebula/check.txt ]

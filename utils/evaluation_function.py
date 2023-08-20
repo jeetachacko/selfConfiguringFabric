@@ -6,7 +6,7 @@ evaluation function is using reward function
 import config
 from config import MOVE_PENALTY
 
-def relative_successthroughput_reward(prev_state, curr_state):
+def relative_successthroughput_reward(curr_state):
     return (round(curr_state[0] + (curr_state[6] / 1000), 2))
 
 # def throughput_reward(curr_state, next_state):
@@ -30,8 +30,8 @@ def steering(curr_state, next_state):
     return 0
 
 
-def total_reward(prev_state, curr_state):
-    return relative_successthroughput_reward(prev_state, curr_state)
+def total_reward(curr_state):
+    return relative_successthroughput_reward(curr_state)
     # return sum(
     #     [
     #         #throughput_reward(curr_state, next_state),
@@ -42,7 +42,7 @@ def total_reward(prev_state, curr_state):
     #     ]
     # )
 
-def objective_achieved(next_state, initial_state):
-    return next_state[0] >= config.EXPECTED_SUCCESSTHROUGHPUT # 100% achieving target. ideal state
+def objective_achieved(curr_state):
+    return curr_state[0] >= config.EXPECTED_SUCCESSTHROUGHPUT # 100% achieving target. ideal state
     # TODO enable below for training
     # or next_state[0] >= initial_state[0]*160/100 # 60% improvement from initial state. ideal for training

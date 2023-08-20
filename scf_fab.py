@@ -52,6 +52,10 @@ def run_scf():
         callback=WandbCallback(model_save_path=f"{model_dir}/{run.id}", verbose=2,),
     )
 
+    result = env.env_method("get_results")
+    print(f"DQN RUN COMPLETE")
+    print(f"DQN RESULTS: {str(result)}")
+
 
     # Save the agent
     model.save("model_dir")
