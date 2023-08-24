@@ -1,5 +1,4 @@
 import gym
-import os
 from gym.spaces.discrete import Discrete
 from gym.spaces.multi_discrete import MultiDiscrete
 from rl_model.agent import Agent
@@ -39,7 +38,7 @@ class FabricEnv(gym.Env):
         # we need to use the single discrete actions
         self.action_space = Discrete(len(discrete_action_space))
         #self.action_space = MultiDiscrete(len(discrete_action_space))
-        self.observation_space = spaces.Box(low=0, high=np.inf, shape=(7,))
+        self.observation_space = spaces.Box(low=0, high=np.inf, shape=(6,))
 
         # record and aggregrate results for informational purposes.
         self.send_result = send_result
@@ -82,7 +81,7 @@ class FabricEnv(gym.Env):
         self.results["worst_states"].append(self.env.current_state)
         self.results["best_states"].append(self.env.current_state)
         self.results["best_configs"].append(
-            {"max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3], "admission_rate": self.agent_pos[4]}
+            {"max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3]}
         )
 
         initial_obs = self.env.current_state
@@ -95,7 +94,7 @@ class FabricEnv(gym.Env):
         print(f"fabric_gym_env.py: step()")
         print(f"self.episode_count: {self.episode_count}")
         print(f"self.episode_step: {self.episode_step}")
-       
+        
         self.episode_step += 1
         #if self.env.needs_rebuild():
             #self.logger.info(f"=== REBUILDING NETWORK BEFORE CONTINUING ===")
@@ -156,7 +155,7 @@ class FabricEnv(gym.Env):
         if (self.env.current_state[0] > self.results["best_states"][self.episode_count][0]):
             self.results["best_states"][self.episode_count] = self.env.current_state
             self.results["best_configs"][self.episode_count] = {
-                "max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3], "admission_rate": self.agent_pos[4]
+                "max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3]
             }
         # if (
         #     total_reward(
@@ -173,7 +172,6 @@ class FabricEnv(gym.Env):
         wandb.log({'preferred_max_bytes': self.agent_pos[1]}, step=self.episode_step)
         wandb.log({'batch_timeout': self.agent_pos[2]}, step=self.episode_step)
         wandb.log({'snapshot_interval_size': self.agent_pos[3]}, step=self.episode_step)
-        wandb.log({'admission_rate': self.agent_pos[4]}, step=self.episode_step)
         wandb.log({'discrete_action_space': discrete_action_space[action]}, step=self.episode_step)
         wandb.log({'reward': reward}, step=self.episode_step)
         wandb.log({'episode_number': self.episode_count}, step=self.episode_step)

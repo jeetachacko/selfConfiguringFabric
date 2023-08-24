@@ -36,10 +36,9 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 
 # training config
 EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
-MAXIMUM_STEPS_PER_EPISODE = 30
+MAXIMUM_STEPS_PER_EPISODE = 25
 NUMBER_OF_EPISODES = 10
-#MAXIMUM_STEPS_PER_EPISODE = 2
-#NUMBER_OF_EPISODES = 4
+
 LEARNING_RATE = 0.0003
 LEARNING_STARTS = 3
 EXPLORATION_FRACTION = 0.2
@@ -67,10 +66,11 @@ max_message_count = [10,50,100,200,400]
 preferred_max_bytes = [1,2,4,16]
 batch_timeout = [0.5,1,2]
 snapshot_interval_size = [16,32,64]
-admission_rate = [50,100,200,300]
+#admission_rate = [50,100,200,300]
 
 #discrete_action_space = max_message_count
-discrete_action_space = list(product(max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, admission_rate))
+#discrete_action_space = list(product(max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, admission_rate))
+discrete_action_space = list(product(max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size))
 
 #DQN_SIZE = 800 # max throughput TODO check with saturation_check.py
 

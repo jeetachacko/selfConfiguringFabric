@@ -73,7 +73,7 @@ def parse_caliper_log(episode_step):
     except Exception as e:
         print(f"log parsing error {e}")
         states.append({
-            'name': keywords,
+            'name': "common",
             'success': 0,
             'fail': 0,
             'send_rate': 0,

@@ -11,9 +11,9 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
 
 def run_scf():
-    log_dir = "/home/ubuntu/nilm/temp/chacko/scf_exps/"
+    log_dir = "/home/ubuntu/nilm/temp/chacko/scf_exps_real_large/"
     os.makedirs(log_dir, exist_ok=True)
-    model_dir = "/home/ubuntu/nilm/temp/chacko/scf_exps/models/"
+    model_dir = "/home/ubuntu/nilm/temp/chacko/scf_exps_real_large/models/"
     os.makedirs(model_dir, exist_ok=True)
     # Create log dir
     #log_dir = "tmp/"
@@ -27,10 +27,10 @@ def run_scf():
     wandb_config = {
         "policy_type": "MlpPolicy",
         "total_timesteps": config.MAXIMUM_STEPS_PER_EPISODE * config.NUMBER_OF_EPISODES,
-        "env_name": "scf_fab",
+        "env_name": "scf_fab_real_large",
         "learning_rate": config.LEARNING_RATE}
     
-    run = wandb.init(project="scf_fab", config=wandb_config, monitor_gym=True, save_code=True, dir=log_dir)
+    run = wandb.init(project="scf_fab_real_large", config=wandb_config, monitor_gym=True, save_code=True, dir=log_dir)
     # Instantiate the agent
     model = DQN(
         MlpPolicy,

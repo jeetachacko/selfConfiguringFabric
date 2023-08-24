@@ -12,7 +12,7 @@ from utils.caliper_report_parser import parse_caliper_log
 from config import (
     #REBUILD_LIMIT,
     #TX_DURATION,
-    max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, admission_rate
+    max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size
 )
 import math
 import numpy as np
@@ -30,7 +30,7 @@ class Fabric:
     def __init__(self):
         print(f"fabric_custom_env.py: init()")
         #self.logger = get_logger()
-        self.current_state = (0, 0, 0, 0, 0, 0, 0)
+        self.current_state = (0, 0, 0, 0, 0, 0)
         self.q_table = {}
         #self.db = MongoConnector()
         self.target_tps = 0
@@ -95,7 +95,7 @@ class Fabric:
     def update_env_config(self, agent_conf, episode_step, fixed_config=True):
         print(f"fabric_custom_env.py: update_env_config()")
         print(f"LIST OF CONFIG VARIABLES: {str(agent_conf)}")
-        rc = subprocess.call(["./scripts/k8s-updateconfig.sh", str(agent_conf[0]), str(agent_conf[1]), str(agent_conf[2]), str(agent_conf[3]), str(agent_conf[4])])
+        rc = subprocess.call(["./scripts/k8s-updateconfig.sh", str(agent_conf[0]), str(agent_conf[1]), str(agent_conf[2]), str(agent_conf[3])])
         #rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
         #rc = subprocess.call("./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh ", shell=True)
         #command = f"./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh "
@@ -116,7 +116,7 @@ class Fabric:
             # benchmark_process.kill()
             #self.logger.info(f"benchmark timeout occured")
             print(f"benchmark timeout occured")
-            self.current_state = (0, 0, 0, 0, 0, 0, 0)  # signal an error
+            self.current_state = (0, 0, 0, 0, 0, 0)  # signal an error
 
         return self.current_state
 
@@ -159,13 +159,11 @@ class Fabric:
                 preferred_max_bytes_idx = preferred_max_bytes.index(agent_conf[1])
                 batch_timeout_idx = batch_timeout.index(agent_conf[2])
                 snapshot_interval_size_idx = snapshot_interval_size.index(agent_conf[3])
-                admission_rate_idx = admission_rate.index(agent_conf[4])
             else:
                 size_idx = agent_conf[0]
                 preferred_max_bytes_idx = agent_conf[1]
                 batch_timeout_idx = agent_conf[2]
                 snapshot_interval_size_idx = agent_conf[3]
-                admission_rate_idx = agent_conf[4]
 
 
             self.current_state = (
@@ -176,7 +174,6 @@ class Fabric:
                 preferred_max_bytes_idx,
                 batch_timeout_idx,
                 snapshot_interval_size_idx,
-                admission_rate_idx,
                 round(np.average(send_rates), 2)
             )
             # stupid approximation of tx limit.
@@ -186,7 +183,7 @@ class Fabric:
         except Exception as e:
             #self.logger.info(f"report parsing error {e}")
             print(f"report parsing error {e}")
-            self.current_state = (0, 0, 0, 0, 0, 0, 0)  # signal an error
+            self.current_state = (0, 0, 0, 0, 0, 0)  # signal an error
 
         #self.logger.info(
         #    f"update state finished for size {block_size} with results {self.current_state}"

@@ -7,7 +7,8 @@ import config
 from config import MOVE_PENALTY
 
 def relative_successthroughput_reward(curr_state):
-    return (round(curr_state[0] + (curr_state[6] / 1000), 2))
+    #return (round(curr_state[0] + (curr_state[5] / 1000), 2))
+    return (round(curr_state[0], 2))
 
 # def throughput_reward(curr_state, next_state):
 #     return (next_state[0] - curr_state[0]) * THROUGHPUT_REWARD_WEIGHT
