@@ -62,7 +62,7 @@ FIXED_THROUGHPUT = None
 === DQN CONFIG ===
 """
 # possible value combination for action space (see PossibleAction)
-max_message_count = [10,50,100,200,400]
+max_message_count = [10,50,100,500,800,1000]
 preferred_max_bytes = [1,2,4,16]
 batch_timeout = [0.5,1,2]
 snapshot_interval_size = [16,32,64]

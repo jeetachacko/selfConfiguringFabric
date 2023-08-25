@@ -11,16 +11,18 @@ cd /home/ubuntu/hll3_opennebula
 
 ./scripts/network_update.sh
 
-echo "waiting for network update to take effect..."
-sleep 60s
 
 #sleep 10s
 #>/home/ubuntu/hll3_opennebula/check.txt
 
-#while [ -f /home/ubuntu/hll3_opennebula/check.txt ]
-#do
-#  echo "waiting for network update to take effect..."
-#  sleep 30s
-#done
+while [ -f /home/ubuntu/hll3_opennebula/check.txt ]
+do
+  echo "waiting for caliper restart..."
+  sleep 180s
+  echo "Delete check file"
+  rm /home/ubuntu/hll3_opennebula/check.txt
+done
+echo "waiting for network update to take effect..."
+sleep 60s
 
 cd /home/ubuntu/selfConfiguringFabric
