@@ -35,6 +35,7 @@ def parse_caliper_log(episode_step):
         value = str(value)
         values = value.split('|')
         print(f"LOG EXTRACTED VALUE {value}")
+        succ = float(values[2].strip())
         duration = (float(values[2].strip()) + float(values[3].strip())) / float(values[8].strip())
         print(f"LOG DURATION {duration}")
         successthroughput = float(values[2].strip()) / duration
@@ -44,10 +45,13 @@ def parse_caliper_log(episode_step):
         print(f"LOG SUCCESS RATE {successrate}")
         print(f"LOG RELATIVE SUCCESS THROUGHPUT {relative_successthroughput}")
 
+        #if int(succ) == 0:
+        #    rc = subprocess.call(["./scripts/caliper_kill.sh"])
+
 
 
         #Metrics are for the previous step - reward is based on this
-        wandb.log({'success': float(values[2].strip())}, step=episode_step)
+        wandb.log({'success': succ}, step=episode_step)
         wandb.log({'fail': float(values[3].strip())}, step=episode_step)
         wandb.log({'send_rate': float(values[4].strip())}, step=episode_step)
         wandb.log({'avg_latency': float(values[7].strip())}, step=episode_step)
@@ -59,7 +63,7 @@ def parse_caliper_log(episode_step):
 
         states.append({
             'name': values[1],
-            'success': float(values[2].strip()),
+            'success': float(succ),
             'fail': float(values[3].strip()),
             'send_rate': float(values[4].strip()),
             'max_latency': float(values[5].strip()),

@@ -36,8 +36,8 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 
 # training config
 EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
-MAXIMUM_STEPS_PER_EPISODE = 25
-NUMBER_OF_EPISODES = 10
+MAXIMUM_STEPS_PER_EPISODE = 10
+NUMBER_OF_EPISODES = 6
 
 LEARNING_RATE = 0.0003
 LEARNING_STARTS = 3
@@ -62,8 +62,8 @@ FIXED_THROUGHPUT = None
 === DQN CONFIG ===
 """
 # possible value combination for action space (see PossibleAction)
-max_message_count = [10,50,100,500,800,1000]
-preferred_max_bytes = [1,2,4,16]
+max_message_count = [100,500,800]
+preferred_max_bytes = [2,4,16]
 batch_timeout = [0.5,1,2]
 snapshot_interval_size = [16,32,64]
 #admission_rate = [50,100,200,300]
