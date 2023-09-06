@@ -10,7 +10,11 @@ sed -i "s/.*sval:.*/    sval: $4/" /home/ubuntu/hll3_opennebula/fabric/channel-u
 cd /home/ubuntu/hll3_opennebula
 
 ./scripts/network_update.sh
-
+# argo logs @latest | grep "max_message_count:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
+# argo logs @latest | grep "preferred_max_bytes:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
+# argo logs @latest | grep "BatchTimeout:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
+# argo logs @latest | grep "snapshot_interval_size:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
+# echo "" >> /home/ubuntu/hll3_opennebula/configvars.txt
 
 #sleep 10s
 #>/home/ubuntu/hll3_opennebula/check.txt
