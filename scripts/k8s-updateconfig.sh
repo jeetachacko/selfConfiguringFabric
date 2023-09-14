@@ -21,12 +21,12 @@ cd /home/ubuntu/hll3_opennebula
 
 while [ -f /home/ubuntu/hll3_opennebula/check.txt ]
 do
-  echo "waiting for caliper restart..."
-  sleep 180s
+  echo "waiting for fabric & caliper restart..."
+  sleep 300s
   echo "Delete check file"
   rm /home/ubuntu/hll3_opennebula/check.txt
 done
 echo "waiting for network update to take effect..."
-sleep 60s
+sleep 120s
 
 cd /home/ubuntu/selfConfiguringFabric
