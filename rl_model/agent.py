@@ -25,10 +25,14 @@ class Agent:
             self.batch_timeout_choice = random.choice(batch_timeout)
             self.snapshot_interval_size_choice = random.choice(snapshot_interval_size)
         else:
-            self.block_size_choice = 10
-            self.preferred_max_bytes_choice = 2
-            self.batch_timeout_choice = 2
-            self.snapshot_interval_size_choice = 16
+            # self.block_size_choice = 10
+            # self.preferred_max_bytes_choice = 2
+            # self.batch_timeout_choice = 2
+            # self.snapshot_interval_size_choice = 16
+            self.block_size_choice = random.choice(max_message_count)
+            self.preferred_max_bytes_choice = random.choice(preferred_max_bytes)
+            self.batch_timeout_choice = random.choice(batch_timeout)
+            self.snapshot_interval_size_choice = random.choice(snapshot_interval_size)
 
     @property
     def position(self):
