@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 
 # !TODO! Update hardcoded values
-sed -i "s/.*value:.*/    value: $1/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
-sed -i "s/.*pval:.*/    pval: $2/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
-sed -i "s/.*tval:.*/    tval: $3s/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
-sed -i "s/.*sval:.*/    sval: $4/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
-#sed -i "s/.*tps.*/            tps: $5/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/config.yaml
+sed -i "s/.*value:.*/    value: $2/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
+sed -i "s/.*pval:.*/    pval: $3/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
+sed -i "s/.*tval:.*/    tval: $4s/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
+sed -i "s/.*sval:.*/    sval: $5/" /home/ubuntu/hll3_opennebula/fabric/channel-update/values.yaml
+#sed -i "s/.*tps.*/            tps: $6/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/config.yaml
 
 cd /home/ubuntu/hll3_opennebula
+
+if [[ $(($1 % 50)) == 0 ]]; then
+  echo "Updating transaction rate and restarting caliper"
+  >/home/ubuntu/hll3_opennebula/tpsupdate.txt
+  pkill -9 -f ./scripts/caliper_run.sh
+  pkill -9 -f caliper-manager
+  pkill -9 -f caliper-logs.txt
+  sleep 60s
+fi
 
 ./scripts/network_update.sh
 # argo logs @latest | grep "max_message_count:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt

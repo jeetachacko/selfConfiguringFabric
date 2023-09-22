@@ -4,3 +4,6 @@ gymnasium
 stable-baselines3[extra]
 python-dotenv
 BeautifulSoup4
+scikit-learn
+scipy 
+matplotlib

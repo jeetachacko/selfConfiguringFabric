@@ -2,6 +2,7 @@ import random
 from dotenv import load_dotenv
 from itertools import product
 import os
+from sklearn import preprocessing
 
 load_dotenv()
 
@@ -36,10 +37,11 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 
 # training config
 EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
-MAXIMUM_STEPS_PER_EPISODE = 30
+MAXIMUM_STEPS_PER_EPISODE = 50
 NUMBER_OF_EPISODES = 10
 
 LEARNING_RATE = 0.0003
+#LEARNING_RATE = 0.0001
 LEARNING_STARTS = 3
 EXPLORATION_FRACTION = 0.1
 FIXED_THROUGHPUT = None
@@ -62,10 +64,21 @@ FIXED_THROUGHPUT = None
 === DQN CONFIG ===
 """
 # possible value combination for action space (see PossibleAction)
-max_message_count = [100,500,800]
-preferred_max_bytes = [2,4,16]
-batch_timeout = [0.5,1,2]
-snapshot_interval_size = [16,32,64]
+real_max_message_count = [100,300,500]
+real_preferred_max_bytes = [2,4,16]
+real_batch_timeout = [0.5,1,2]
+real_snapshot_interval_size = [16,32,64]
+
+#normalized action space
+max_message_count = (preprocessing.normalize([real_max_message_count]))[0].tolist()
+preferred_max_bytes = (preprocessing.normalize([real_preferred_max_bytes]))[0].tolist()
+batch_timeout = (preprocessing.normalize([real_batch_timeout]))[0].tolist()
+snapshot_interval_size = (preprocessing.normalize([real_snapshot_interval_size]))[0].tolist()
+
+# max_message_count = normalize(real_max_message_count, range_to_normalize[0], range_to_normalize[1])
+# preferred_max_bytes = normalize(real_preferred_max_bytes, range_to_normalize[0], range_to_normalize[1])
+# batch_timeout = normalize(real_batch_timeout, range_to_normalize[0], range_to_normalize[1])
+# snapshot_interval_size = normalize(real_snapshot_interval_size, range_to_normalize[0], range_to_normalize[1])
 #admission_rate = [50,100,200,300]
 
 #discrete_action_space = max_message_count
