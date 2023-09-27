@@ -37,14 +37,22 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 
 # training config
 EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
-MAXIMUM_STEPS_PER_EPISODE = 50
-NUMBER_OF_EPISODES = 10
+MAXIMUM_STEPS_PER_EPISODE = 300
+NUMBER_OF_EPISODES = 3
 
-LEARNING_RATE = 0.0003
-#LEARNING_RATE = 0.0001
-LEARNING_STARTS = 3
-EXPLORATION_FRACTION = 0.1
+#LEARNING_RATE = 0.0003
+LEARNING_RATE = 0.0001
+EXPLORATION_FRACTION = 0.2
 FIXED_THROUGHPUT = None
+
+LEARNING_STARTS = 100
+BUFFER_SIZE = 10000
+BATCH_SIZE = 64
+PRIORITIZED_REPLAY = True
+NETWORK_UPDATE_FREQUENCY = 1000
+
+
+
 
 
 # notification config
@@ -74,6 +82,11 @@ max_message_count = (preprocessing.normalize([real_max_message_count]))[0].tolis
 preferred_max_bytes = (preprocessing.normalize([real_preferred_max_bytes]))[0].tolist()
 batch_timeout = (preprocessing.normalize([real_batch_timeout]))[0].tolist()
 snapshot_interval_size = (preprocessing.normalize([real_snapshot_interval_size]))[0].tolist()
+
+#max_message_count = [0.16903085094570333, 0.50709255283711, 0.8451542547285166]
+#preferred_max_bytes = [0.1203858530857692, 0.2407717061715384, 0.9630868246861536]
+#batch_timeout = [0.2182178902359924, 0.4364357804719848, 0.8728715609439696]
+#snapshot_interval_size = [0.2182178902359924, 0.4364357804719848, 0.8728715609439696]
 
 # max_message_count = normalize(real_max_message_count, range_to_normalize[0], range_to_normalize[1])
 # preferred_max_bytes = normalize(real_preferred_max_bytes, range_to_normalize[0], range_to_normalize[1])

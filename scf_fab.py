@@ -39,6 +39,10 @@ def run_scf():
         learning_rate=config.LEARNING_RATE,
         learning_starts=config.LEARNING_STARTS,
         exploration_fraction=config.EXPLORATION_FRACTION,
+        buffer_size =  config.BUFFER_SIZE,
+        batch_size = config.BATCH_SIZE, 
+        #prioritized_replay = config.PRIORITIZED_REPLAY, 
+        #target_network_update_freq = config.NETWORK_UPDATE_FREQUENCY,
         #tensorboard_log=log_dir,
     )
 

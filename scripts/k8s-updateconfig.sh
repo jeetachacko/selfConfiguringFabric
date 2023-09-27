@@ -9,13 +9,20 @@ sed -i "s/.*sval:.*/    sval: $5/" /home/ubuntu/hll3_opennebula/fabric/channel-u
 
 cd /home/ubuntu/hll3_opennebula
 
-if [[ $(($1 % 50)) == 0 ]]; then
+if [[ $(($1 % 300)) == 0 ]]; then
   echo "Updating transaction rate and restarting caliper"
   >/home/ubuntu/hll3_opennebula/tpsupdate.txt
   pkill -9 -f ./scripts/caliper_run.sh
   pkill -9 -f caliper-manager
   pkill -9 -f caliper-logs.txt
   sleep 60s
+  while [ -f /home/ubuntu/hll3_opennebula/check_caliper.txt ]
+  do
+    echo "waiting for caliper restart..."
+    sleep 300s
+    echo "Delete check file"
+    rm /home/ubuntu/hll3_opennebula/check_caliper.txt
+  done
 fi
 
 ./scripts/network_update.sh
