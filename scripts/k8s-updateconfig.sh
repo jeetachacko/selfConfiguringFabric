@@ -9,7 +9,7 @@ sed -i "s/.*sval:.*/    sval: $5/" /home/ubuntu/hll3_opennebula/fabric/channel-u
 
 cd /home/ubuntu/hll3_opennebula
 
-if [[ $(($1 % 300)) == 0 ]]; then
+if [[ $(($1 % 100)) == 0 ]]; then
   echo "Updating transaction rate and restarting caliper"
   >/home/ubuntu/hll3_opennebula/tpsupdate.txt
   pkill -9 -f ./scripts/caliper_run.sh
@@ -26,6 +26,7 @@ if [[ $(($1 % 300)) == 0 ]]; then
 fi
 
 ./scripts/network_update.sh
+
 # argo logs @latest | grep "max_message_count:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
 # argo logs @latest | grep "preferred_max_bytes:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
 # argo logs @latest | grep "BatchTimeout:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt

@@ -36,6 +36,7 @@ class Fabric:
         #self.db = MongoConnector()
         self.target_tps = 0
         self.tx_submitted = 0
+        self.current_throughput = 0
         #rc = subprocess.call("./scripts/copy_config_init.sh")
         #rc = subprocess.call("./scripts/k8s-rebuild-network.sh")
         #rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
@@ -127,7 +128,7 @@ class Fabric:
         print(f"fabric_custom_env.py: update_current_state()")
         print(f"LIST OF CONFIG VARIABLES: {str(agent_conf)}")
         # TODO change the keyword for different transaction/chaincode. Provide multiple keywords for multiple benchmarks.
-        raw_states = parse_caliper_log(episode_step) # Transaction keyword
+        raw_states = parse_caliper_log(episode_step, self.current_throughput) # Transaction keyword
         print(f"===== THE STATE IS {raw_states} =====")
         
         try:
@@ -170,7 +171,7 @@ class Fabric:
                 batch_timeout_idx = agent_conf[2]
                 snapshot_interval_size_idx = agent_conf[3]
 
-            
+            self.current_throughput = round(np.average(throughputs), 2)
             state_arr = (round(np.average(throughputs), 2), round(np.average(send_rates), 2))
             state_arr = (preprocessing.normalize([state_arr]))[0]
 
