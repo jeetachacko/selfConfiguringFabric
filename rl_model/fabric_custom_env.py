@@ -12,7 +12,7 @@ from utils.caliper_report_parser import parse_caliper_log
 from config import (
     #REBUILD_LIMIT,
     #TX_DURATION,
-    max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, real_max_message_count, real_preferred_max_bytes, real_batch_timeout, real_snapshot_interval_size
+    function_type,
 )
 import math
 import numpy as np
@@ -96,9 +96,9 @@ class Fabric:
     # update fabric config
     def update_env_config(self, agent_conf, episode_step, fixed_config=True):
         print(f"fabric_custom_env.py: update_env_config()")
-        conf_vars = [real_max_message_count[max_message_count.index(agent_conf[0])], real_preferred_max_bytes[preferred_max_bytes.index(agent_conf[1])], real_batch_timeout[batch_timeout.index(agent_conf[2])], real_snapshot_interval_size[snapshot_interval_size.index(agent_conf[3])]]
-        print(f"LIST OF CONFIG VARIABLES: {str(conf_vars)}")
-        rc = subprocess.call(["./scripts/k8s-updateconfig.sh", str(episode_step), str(conf_vars[0]), str(conf_vars[1]), str(conf_vars[2]), str(conf_vars[3])])
+        #conf_vars = [real_max_message_count[max_message_count.index(agent_conf[0])], real_preferred_max_bytes[preferred_max_bytes.index(agent_conf[1])], real_batch_timeout[batch_timeout.index(agent_conf[2])], real_snapshot_interval_size[snapshot_interval_size.index(agent_conf[3])]]
+        print(f"LIST OF CONFIG VARIABLES: {str(agent_conf)}")
+        rc = subprocess.call(["./scripts/k8s-updateconfig.sh", str(episode_step), str(agent_conf)])
         #rc = subprocess.call("./scripts/k8s-execute-caliper.sh")
         #rc = subprocess.call("./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh ", shell=True)
         #command = f"./scripts/k8s-updateconfig.sh {block_size} && ./scripts/k8s-execute-caliper.sh "
@@ -151,8 +151,11 @@ class Fabric:
             #relative_successthroughputs = np.array(
             #    [state["relative_successthroughput"] for state in raw_states]
             #)
-            throughputs = np.array(
+            sample_throughputs = np.array(
                 [state["throughput"] for state in raw_states]
+            )
+            throughputs = np.array(
+                [state["successthroughput"] for state in raw_states]
             )
             send_rates = np.array(
                 [state["send_rate"] for state in raw_states]
@@ -161,17 +164,11 @@ class Fabric:
             np.nan_to_num(send_rates, copy=False)
 
             if fixed_config:
-                size_idx = max_message_count.index(agent_conf[0])
-                preferred_max_bytes_idx = preferred_max_bytes.index(agent_conf[1])
-                batch_timeout_idx = batch_timeout.index(agent_conf[2])
-                snapshot_interval_size_idx = snapshot_interval_size.index(agent_conf[3])
+                function_type_idx = agent_conf
             else:
-                size_idx = agent_conf[0]
-                preferred_max_bytes_idx = agent_conf[1]
-                batch_timeout_idx = agent_conf[2]
-                snapshot_interval_size_idx = agent_conf[3]
+                function_type_idx = agent_conf
 
-            self.current_throughput = round(np.average(throughputs), 2)
+            self.current_throughput = round(np.average(sample_throughputs), 2)
             state_arr = (round(np.average(throughputs), 2), round(np.average(send_rates), 2))
             state_arr = (preprocessing.normalize([state_arr]))[0]
 

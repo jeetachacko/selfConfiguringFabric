@@ -11,7 +11,7 @@ from config import (
     MAXIMUM_STEPS_PER_EPISODE, OBJECTIVE_REWARD_MULTIPLIER,
     discrete_action_space, #get_tps_value,
     #set_dqn_expected_throughput,
-    max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, real_max_message_count, real_preferred_max_bytes, real_batch_timeout, real_snapshot_interval_size
+    function_type,
 
 )
 
@@ -85,7 +85,7 @@ class FabricEnv(gym.Env):
         self.results["worst_states"].append(self.env.current_state)
         self.results["best_states"].append(self.env.current_state)
         self.results["best_configs"].append(
-            {"max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3]}
+            {"function_type": self.agent_pos}
         )
 
         initial_obs = self.env.current_state
@@ -159,7 +159,7 @@ class FabricEnv(gym.Env):
         if (self.env.current_state[0] > self.results["best_states"][self.episode_count][0]):
             self.results["best_states"][self.episode_count] = self.env.current_state
             self.results["best_configs"][self.episode_count] = {
-                "max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3]
+                "function_type": self.agent_pos
             }
         # if (
         #     total_reward(
@@ -171,15 +171,12 @@ class FabricEnv(gym.Env):
             self.results["worst_states"][self.episode_count] = self.env.current_state
 
 
-        conf_vars = [real_max_message_count[max_message_count.index(self.agent_pos[0])], real_preferred_max_bytes[preferred_max_bytes.index(self.agent_pos[1])], real_batch_timeout[batch_timeout.index(self.agent_pos[2])], real_snapshot_interval_size[snapshot_interval_size.index(self.agent_pos[3])]]
+        # conf_vars = [real_max_message_count[max_message_count.index(self.agent_pos[0])], real_preferred_max_bytes[preferred_max_bytes.index(self.agent_pos[1])], real_batch_timeout[batch_timeout.index(self.agent_pos[2])], real_snapshot_interval_size[snapshot_interval_size.index(self.agent_pos[3])]]
 
-        print(f"================ CONF VARS FOR WANDB {conf_vars[0]} {conf_vars[1]} {conf_vars[2]} {conf_vars[3]}")
+        # print(f"================ CONF VARS FOR WANDB {conf_vars[0]} {conf_vars[1]} {conf_vars[2]} {conf_vars[3]}")
 
         #Reward is for previous step but variables are for the current step
-        wandb.log({'max_message_count': conf_vars[0]}, step=self.episode_step)
-        wandb.log({'preferred_max_bytes': conf_vars[1]}, step=self.episode_step)
-        wandb.log({'batch_timeout': conf_vars[2]}, step=self.episode_step)
-        wandb.log({'snapshot_interval_size': conf_vars[3]}, step=self.episode_step)
+        wandb.log({'function_type': self.agent_pos}, step=self.episode_step)
         wandb.log({'discrete_action_space': discrete_action_space[action]}, step=self.episode_step)
         wandb.log({'reward': reward}, step=self.episode_step)
         wandb.log({'episode_number': self.episode_count}, step=self.episode_step)
