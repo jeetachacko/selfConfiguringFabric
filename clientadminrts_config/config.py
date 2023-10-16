@@ -37,8 +37,8 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 
 # training config
 EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
-MAXIMUM_STEPS_PER_EPISODE = 300
-NUMBER_OF_EPISODES = 3
+MAXIMUM_STEPS_PER_EPISODE = 100
+NUMBER_OF_EPISODES = 7
 
 #LEARNING_RATE = 0.0003
 LEARNING_RATE = 0.0001
@@ -69,17 +69,21 @@ NETWORK_UPDATE_FREQUENCY = 1000
 === DQN CONFIG ===
 """
 
-#Number of clients 10
-client_1 = [0.5,0,1]
-client_2 = [0.5,0,1]
-client_3 = [0.5,0,1]
-client_4 = [0.5,0,1]
-client_5 = [0.5,0,1]
-client_6 = [0.5,0,1]
-client_7 = [0.5,0,1]
-client_8 = [0.5,0,1]
-client_9 = [0.5,0,1]
-client_10 = [0.5,0,1]
+# #Number of clients 10
+# client_1 = [0.5,0,1]
+# client_2 = [0.5,0,1]
+# client_3 = [0.5,0,1]
+# client_4 = [0.5,0,1]
+# client_5 = [0.5,0,1]
+# client_6 = [0.5,0,1]
+# client_7 = [0.5,0,1]
+# client_8 = [0.5,0,1]
+# client_9 = [0.5,0,1]
+# client_10 = [0.5,0,1]
+
+#Number of orgs 2
+org_1 = [0.5,0,1]
+org_2 = [0.5,0,1]
 
 # # possible value combination for action space (see PossibleAction)
 # real_max_message_count = [100,300,500]
@@ -106,7 +110,8 @@ client_10 = [0.5,0,1]
 
 #discrete_action_space = max_message_count
 #discrete_action_space = list(product(max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, admission_rate))
-discrete_action_space = list(product(client_1, client_2, client_3, client_4, client_5, client_6, client_7, client_8, client_9, client_10))
+#discrete_action_space = list(product(client_1, client_2, client_3, client_4, client_5, client_6, client_7, client_8, client_9, client_10))
+discrete_action_space = list(product(org_1, org_2))
 
 #DQN_SIZE = 800 # max throughput TODO check with saturation_check.py
 
