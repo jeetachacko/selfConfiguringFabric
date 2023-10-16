@@ -32,6 +32,25 @@ elif [[ $(($1 % 100)) == 0 ]]; then
     sed -i "s/.*var workloadType.*/          var workloadType = 0/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/getValues.js
   fi
 
+<<<<<<< HEAD
+=======
+if [[ $1 < 99 ]] && [[ $(($1 % 33)) == 0 ]]; then
+  echo "Updating transaction rate and restarting caliper"
+  >/home/ubuntu/hll3_opennebula/tpsupdate.txt
+  pkill -9 -f ./scripts/caliper_run.sh
+  pkill -9 -f caliper-manager
+  pkill -9 -f caliper-logs.txt
+  sleep 60s
+  while [ -f /home/ubuntu/hll3_opennebula/check_caliper.txt ]
+  do
+    echo "waiting for caliper restart..."
+    sleep 300s
+    echo "Delete check file"
+    rm /home/ubuntu/hll3_opennebula/check_caliper.txt
+  done
+elif [[ $(($1 % 100)) == 0 ]]; then
+  echo "Updating transaction rate and restarting caliper"
+>>>>>>> f9b6dda82a1e1e095e36d93f00448f3a9696d999
   >/home/ubuntu/hll3_opennebula/tpsupdate.txt
   pkill -9 -f ./scripts/caliper_run.sh
   pkill -9 -f caliper-manager
@@ -46,6 +65,7 @@ elif [[ $(($1 % 100)) == 0 ]]; then
   done
 fi
 
+<<<<<<< HEAD
 #Comment lines 35 to 48 for baseline run
 echo "Updating function type and restarting caliper"
 sed -i "s/.*var functionType.*/          var functionType = $2/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/getValues.js
@@ -65,6 +85,10 @@ done
 
 
 #./scripts/network_update.sh
+=======
+
+./scripts/network_update.sh
+>>>>>>> f9b6dda82a1e1e095e36d93f00448f3a9696d999
 
 # argo logs @latest | grep "max_message_count:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
 # argo logs @latest | grep "preferred_max_bytes:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
