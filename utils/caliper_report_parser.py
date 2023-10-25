@@ -30,6 +30,14 @@ def parse_caliper_log(episode_step, current_throughput):
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
     )
+    rc = subprocess.call(["/home/ubuntu/hll3_opennebula/caliper/readBlockchain/readB.sh"])
+    command_read = f"cat /home/ubuntu/hll3_opennebula/caliper/workerlog.txt | grep 'succ0' | tail -1"
+    blockreader_process = subprocess.Popen(
+        [command_read],
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    )
         
     try:
         value, err = update_process.communicate()
@@ -37,23 +45,45 @@ def parse_caliper_log(episode_step, current_throughput):
         values = value.split('|')
         succtest = float(values[2].strip())
         throughputtest = float(values[8].strip())
-        if (episode_step % 100 != 0):
-            while succtest == 0 or (throughputtest < (current_throughput/2)):
-                print("SUCCESS IS ZERO OR TOO LOW")
-                open("/home/ubuntu/hll3_opennebula/parser.txt", 'a').close()
-                time.sleep(120)
-                command = f"cat /home/ubuntu/hll3_opennebula/caliper/caliper-logs.txt | grep '| common |' | tail -1"
-                update_process = subprocess.Popen(
-                    [command],
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.DEVNULL,
-                )
-                value, err = update_process.communicate()
-                value = str(value)
-                values = value.split('|')
-                succtest = float(values[2].strip())
-                throughputtest = float(values[8].strip())
+
+        value_read, err_read = blockreader_process.communicate()
+        value_read = str(value_read)
+        values_read = value_read.split('=')
+        succ0test = float(values_read[1].strip())
+
+        if (episode_step % 100 == 0):
+            throughputtest = current_throughput
+
+        #if (episode_step % 100 != 0):
+        while succtest == 0 or succ0test == 0 or (throughputtest < (current_throughput/2)):
+            print("SUCCESS IS ZERO OR TOO LOW")
+            open("/home/ubuntu/hll3_opennebula/parser.txt", 'a').close()
+            time.sleep(120)
+            command = f"cat /home/ubuntu/hll3_opennebula/caliper/caliper-logs.txt | grep '| common |' | tail -1"
+            update_process = subprocess.Popen(
+                [command],
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+            )
+            value, err = update_process.communicate()
+            value = str(value)
+            values = value.split('|')
+            succtest = float(values[2].strip())
+            throughputtest = float(values[8].strip())
+
+            rc = subprocess.call(["/home/ubuntu/hll3_opennebula/caliper/readBlockchain/readB.sh"])
+            command_read = f"cat /home/ubuntu/hll3_opennebula/caliper/workerlog.txt | grep 'succ0' | tail -1"
+            blockreader_process = subprocess.Popen(
+                [command_read],
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+            )
+            value_read, err_read = blockreader_process.communicate()
+            value_read = str(value_read)
+            values_read = value_read.split('=')
+            succ0test = float(values_read[1].strip())
 
         
         print(f"LOG EXTRACTED VALUE {value}")
@@ -66,6 +96,99 @@ def parse_caliper_log(episode_step, current_throughput):
         relative_successthroughput = successthroughput / float(values[4].strip())
         print(f"LOG SUCCESS RATE {successrate}")
         print(f"LOG RELATIVE SUCCESS THROUGHPUT {relative_successthroughput}")
+
+        print(f"BLOCK READER LOG EXTRACTED VALUE  {values_read}")
+        succ0 = float(values_read[1].strip())
+        succ1 = float(values_read[3].strip())
+        succ2 = float(values_read[5].strip())
+        succ3 = float(values_read[7].strip())
+        succ4 = float(values_read[9].strip())
+        succ5 = float(values_read[11].strip())
+        succ6 = float(values_read[13].strip())
+        succ7 = float(values_read[15].strip())
+        succ8 = float(values_read[17].strip())
+        succ9 = float(values_read[19].strip())
+        totaltx0 = float(values_read[21].strip())
+        totaltx1 = float(values_read[23].strip())
+        totaltx2 = float(values_read[25].strip())
+        totaltx3 = float(values_read[27].strip())
+        totaltx4 = float(values_read[29].strip())
+        totaltx5 = float(values_read[31].strip())
+        totaltx6 = float(values_read[33].strip())
+        totaltx7 = float(values_read[35].strip())
+        totaltx8 = float(values_read[37].strip())
+        totaltx9 = float(values_read[39].strip())
+        totalsucclatency0 = float(values_read[41].strip())
+        totalsucclatency1 = float(values_read[43].strip())
+        totalsucclatency2 = float(values_read[45].strip())
+        totalsucclatency3 = float(values_read[47].strip())
+        totalsucclatency4 = float(values_read[49].strip())
+        totalsucclatency5 = float(values_read[51].strip())
+        totalsucclatency6 = float(values_read[53].strip())
+        totalsucclatency7 = float(values_read[55].strip())
+        totalsucclatency8 = float(values_read[57].strip())
+        totalsucclatency9 = float(values_read[59].strip())
+        avgsucclatency0 = totalsucclatency0 / succ0
+        avgsucclatency1 = totalsucclatency1 / succ1
+        avgsucclatency2 = totalsucclatency2 / succ2
+        avgsucclatency3 = totalsucclatency3 / succ3
+        avgsucclatency4 = totalsucclatency4 / succ4
+        avgsucclatency5 = totalsucclatency5 / succ5
+        avgsucclatency6 = totalsucclatency6 / succ6
+        avgsucclatency7 = totalsucclatency7 / succ7
+        avgsucclatency8 = totalsucclatency8 / succ8
+        avgsucclatency9 = totalsucclatency9 / succ9
+        throughput0 = totaltx0 / 10
+        throughput1 = totaltx1 / 10
+        throughput2 = totaltx2 / 10
+        throughput3 = totaltx3 / 10
+        throughput4 = totaltx4 / 10
+        throughput5 = totaltx5 / 10
+        throughput6 = totaltx6 / 10
+        throughput7 = totaltx7 / 10
+        throughput8 = totaltx8 / 10
+        throughput9 = totaltx9 / 10
+        succ_org1= succ0 + succ1 + succ2 + succ3 + succ4
+        succ_org2= succ5 + succ6 + succ7 + succ8 + succ9
+        totaltx_org1= totaltx0 + totaltx1 + totaltx2 + totaltx3 + totaltx4
+        totaltx_org2= totaltx5 + totaltx6 + totaltx7 + totaltx8 + totaltx9
+        totalsucclatency_org1= totalsucclatency0 + totalsucclatency1 + totalsucclatency2 + totalsucclatency3 + totalsucclatency4
+        totalsucclatency_org2= totalsucclatency5 + totalsucclatency6 + totalsucclatency7 + totalsucclatency8 + totalsucclatency9
+        avgsucclatency_org1 = totalsucclatency_org1 / succ_org1
+        avgsucclatency_org2 = totalsucclatency_org2 / succ_org2
+        throughput_org1 = totaltx_org1 / 10
+        throughput_org2 = totaltx_org2 / 10
+        
+        #succcountarr = [succ0, succ1, succ2, succ3, succ4, succ5, succ6, succ7, succ8, succ9]
+        succcountarr = [succ_org1, succ_org2]
+        jfi = (pow(sum(succcountarr), 2))/(len(succcountarr) * sum(i*i for i in succcountarr))
+        jfi = jfi * 100
+        print("Jain's fairness index:", jfi)
+        # jfi = float(values_read[1].strip())
+        # print("JFI:", jfi)
+        # org1txcount = int(values_read[3].strip())
+        # print("Org1txcount:", org1txcount)
+        # org1successrate = float(values_read[5].strip())
+        # print("Org1successrate:", org1successrate)
+        # org1succTr = float(values_read[7].strip())
+        # print("Org1succTr:", org1succTr)
+        # org1Tr = float(values_read[9].strip())
+        # print("Org1Tr:", org1Tr)
+        # org2txcount = int(values_read[11].strip())
+        # print("Org2txcount:", org2txcount)
+        # org2successrate = float(values_read[13].strip())
+        # print("Org2successrate:", org2successrate)
+        # org2succTr = float(values_read[15].strip())
+        # print("Org2succTr:", org2succTr)
+        # org2Tr = float(values_read[17].strip())
+        # print("Org2Tr:", org2Tr)
+        # totalsucctrrate = float(values_read[19].strip())
+        # print("totalsucctrrate:", totalsucctrrate)
+        # org1succcount = float(values_read[21].strip())
+        # print("org1succcount:", org1succcount)
+        # org2succcount = float(values_read[23].strip())
+        # print("org2succcount:", org2succcount)
+
 
         #if int(succ) == 0:
         #    rc = subprocess.call(["./scripts/caliper_kill.sh"])
@@ -81,6 +204,58 @@ def parse_caliper_log(episode_step, current_throughput):
         wandb.log({'successthroughput': successthroughput}, step=episode_step)
         wandb.log({'successrate': successrate}, step=episode_step)
         wandb.log({'relative_successthroughput': relative_successthroughput}, step=episode_step)
+        wandb.log({'jfi': jfi}, step=episode_step)
+        wandb.log({'succ_org1': succ_org1}, step=episode_step)
+        wandb.log({'succ_org2': succ_org2}, step=episode_step)
+        wandb.log({'totaltx_org1': totaltx_org1}, step=episode_step)
+        wandb.log({'totaltx_org2': totaltx_org2}, step=episode_step)
+        wandb.log({'totalsucclatency_org1': totalsucclatency_org1}, step=episode_step)
+        wandb.log({'totalsucclatency_org2': totalsucclatency_org2}, step=episode_step)
+        wandb.log({'avgsucclatency_org1': avgsucclatency_org1}, step=episode_step)
+        wandb.log({'avgsucclatency_org2': avgsucclatency_org2}, step=episode_step)
+        wandb.log({'throughput_org1': throughput_org1}, step=episode_step)
+        wandb.log({'throughput_org2': throughput_org2}, step=episode_step)
+        wandb.log({'succ0': succ0}, step=episode_step)
+        wandb.log({'succ1': succ1}, step=episode_step)
+        wandb.log({'succ2': succ2}, step=episode_step)
+        wandb.log({'succ3': succ3}, step=episode_step)
+        wandb.log({'succ4': succ4}, step=episode_step)
+        wandb.log({'succ5': succ5}, step=episode_step)
+        wandb.log({'succ6': succ6}, step=episode_step)
+        wandb.log({'succ7': succ7}, step=episode_step)
+        wandb.log({'succ8': succ8}, step=episode_step)
+        wandb.log({'succ9': succ9}, step=episode_step)
+        wandb.log({'throughput0': throughput0}, step=episode_step)
+        wandb.log({'throughput1': throughput1}, step=episode_step)
+        wandb.log({'throughput2': throughput2}, step=episode_step)
+        wandb.log({'throughput3': throughput3}, step=episode_step)
+        wandb.log({'throughput4': throughput4}, step=episode_step)
+        wandb.log({'throughput5': throughput5}, step=episode_step)
+        wandb.log({'throughput6': throughput6}, step=episode_step)
+        wandb.log({'throughput7': throughput7}, step=episode_step)
+        wandb.log({'throughput8': throughput8}, step=episode_step)
+        wandb.log({'throughput9': throughput9}, step=episode_step)
+        wandb.log({'avgsucclatency0': avgsucclatency0}, step=episode_step)
+        wandb.log({'avgsucclatency1': avgsucclatency1}, step=episode_step)
+        wandb.log({'avgsucclatency2': avgsucclatency2}, step=episode_step)
+        wandb.log({'avgsucclatency3': avgsucclatency3}, step=episode_step)
+        wandb.log({'avgsucclatency4': avgsucclatency4}, step=episode_step)
+        wandb.log({'avgsucclatency5': avgsucclatency5}, step=episode_step)
+        wandb.log({'avgsucclatency6': avgsucclatency6}, step=episode_step)
+        wandb.log({'avgsucclatency7': avgsucclatency7}, step=episode_step)
+        wandb.log({'avgsucclatency8': avgsucclatency8}, step=episode_step)
+        wandb.log({'avgsucclatency9': avgsucclatency9}, step=episode_step)
+        # wandb.log({'org1txcount': org1txcount}, step=episode_step)
+        # wandb.log({'org1successrate': org1successrate}, step=episode_step)
+        # wandb.log({'org2txcount': org2txcount}, step=episode_step)
+        # wandb.log({'org2successrate': org2successrate}, step=episode_step)
+        # wandb.log({'org1succTr': org1succTr}, step=episode_step)
+        # wandb.log({'org1Tr': org1Tr}, step=episode_step)
+        # wandb.log({'org2succTr': org2succTr}, step=episode_step)
+        # wandb.log({'org2Tr': org2Tr}, step=episode_step)
+        # wandb.log({'totalsucctrrate': totalsucctrrate}, step=episode_step)
+        # wandb.log({'org1succcount': org1succcount}, step=episode_step)
+        # wandb.log({'org2succcount': org2succcount}, step=episode_step)
 
 
         states.append({
@@ -95,6 +270,8 @@ def parse_caliper_log(episode_step, current_throughput):
             'successthroughput': float(successthroughput),
             'successrate': float(successrate),
             'relative_successthroughput': float(relative_successthroughput),
+            'jfi': float(jfi),
+#            'totalsucctrrate': float(totalsucctrrate),
         })
     except Exception as e:
         print(f"log parsing error {e}")

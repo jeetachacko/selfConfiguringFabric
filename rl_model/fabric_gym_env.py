@@ -11,7 +11,8 @@ from config import (
     MAXIMUM_STEPS_PER_EPISODE, OBJECTIVE_REWARD_MULTIPLIER,
     discrete_action_space, #get_tps_value,
     #set_dqn_expected_throughput,
-    max_message_count, preferred_max_bytes, batch_timeout, snapshot_interval_size, real_max_message_count, real_preferred_max_bytes, real_batch_timeout, real_snapshot_interval_size
+    # client_1, client_2, client_3, client_4, client_5, client_6, client_7, client_8, client_9, client_10
+    org_1, org_2
 
 )
 
@@ -42,7 +43,7 @@ class FabricEnv(gym.Env):
         self.action_space = Discrete(len(discrete_action_space))
         #self.action_space = MultiDiscrete(len(discrete_action_space))
         #self.observation_space = spaces.Box(low=0, high=np.inf, shape=(6,))
-        self.observation_space = spaces.Box(low=0, high=1, shape=(2,))
+        self.observation_space = spaces.Box(low=0, high=1, shape=(3,))
 
         # record and aggregrate results for informational purposes.
         self.send_result = send_result
@@ -85,7 +86,8 @@ class FabricEnv(gym.Env):
         self.results["worst_states"].append(self.env.current_state)
         self.results["best_states"].append(self.env.current_state)
         self.results["best_configs"].append(
-            {"max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3]}
+            # {"client_1": self.agent_pos[0], "client_2": self.agent_pos[1], "client_3": self.agent_pos[2], "client_4": self.agent_pos[3], "client_5": self.agent_pos[4], "client_6": self.agent_pos[5], "client_7": self.agent_pos[6], "client_8": self.agent_pos[7], "client_9": self.agent_pos[8], "client_10": self.agent_pos[9]}
+            {"org_1": self.agent_pos[0], "org_2": self.agent_pos[1]}
         )
 
         initial_obs = self.env.current_state
@@ -159,7 +161,8 @@ class FabricEnv(gym.Env):
         if (self.env.current_state[0] > self.results["best_states"][self.episode_count][0]):
             self.results["best_states"][self.episode_count] = self.env.current_state
             self.results["best_configs"][self.episode_count] = {
-                "max_message_count": self.agent_pos[0], "preferred_max_bytes": self.agent_pos[1], "batch_timeout": self.agent_pos[2], "snapshot_interval_size": self.agent_pos[3]
+                # "client_1": self.agent_pos[0], "client_2": self.agent_pos[1], "client_3": self.agent_pos[2], "client_4": self.agent_pos[3], "client_5": self.agent_pos[4], "client_6": self.agent_pos[5], "client_7": self.agent_pos[6], "client_8": self.agent_pos[7], "client_9": self.agent_pos[8], "client_10": self.agent_pos[9]
+                "org_1": self.agent_pos[0], "org_2": self.agent_pos[1]
             }
         # if (
         #     total_reward(
@@ -171,15 +174,23 @@ class FabricEnv(gym.Env):
             self.results["worst_states"][self.episode_count] = self.env.current_state
 
 
-        conf_vars = [real_max_message_count[max_message_count.index(self.agent_pos[0])], real_preferred_max_bytes[preferred_max_bytes.index(self.agent_pos[1])], real_batch_timeout[batch_timeout.index(self.agent_pos[2])], real_snapshot_interval_size[snapshot_interval_size.index(self.agent_pos[3])]]
+        #conf_vars = [real_max_message_count[max_message_count.index(self.agent_pos[0])], real_preferred_max_bytes[preferred_max_bytes.index(self.agent_pos[1])], real_batch_timeout[batch_timeout.index(self.agent_pos[2])], real_snapshot_interval_size[snapshot_interval_size.index(self.agent_pos[3])]]
 
-        print(f"================ CONF VARS FOR WANDB {conf_vars[0]} {conf_vars[1]} {conf_vars[2]} {conf_vars[3]}")
+        print(f"================ CONF VARS FOR WANDB {self.agent_pos} ====================")
 
         #Reward is for previous step but variables are for the current step
-        wandb.log({'max_message_count': conf_vars[0]}, step=self.episode_step)
-        wandb.log({'preferred_max_bytes': conf_vars[1]}, step=self.episode_step)
-        wandb.log({'batch_timeout': conf_vars[2]}, step=self.episode_step)
-        wandb.log({'snapshot_interval_size': conf_vars[3]}, step=self.episode_step)
+        wandb.log({'org_1_learnedchoice': self.agent_pos[0]}, step=self.episode_step)
+        wandb.log({'org_2_learnedchoice': self.agent_pos[1]}, step=self.episode_step)
+        # wandb.log({'client_1_learnedchoice': self.agent_pos[0]}, step=self.episode_step)
+        # wandb.log({'client_2_learnedchoice': self.agent_pos[1]}, step=self.episode_step)
+        # wandb.log({'client_3_learnedchoice': self.agent_pos[2]}, step=self.episode_step)
+        # wandb.log({'client_4_learnedchoice': self.agent_pos[3]}, step=self.episode_step)
+        # wandb.log({'client_5_learnedchoice': self.agent_pos[4]}, step=self.episode_step)
+        # wandb.log({'client_6_learnedchoice': self.agent_pos[5]}, step=self.episode_step)
+        # wandb.log({'client_7_learnedchoice': self.agent_pos[6]}, step=self.episode_step)
+        # wandb.log({'client_8_learnedchoice': self.agent_pos[7]}, step=self.episode_step)
+        # wandb.log({'client_9_learnedchoice': self.agent_pos[8]}, step=self.episode_step)
+        # wandb.log({'client_10_learnedchoice': self.agent_pos[9]}, step=self.episode_step)
         wandb.log({'discrete_action_space': discrete_action_space[action]}, step=self.episode_step)
         wandb.log({'reward': reward}, step=self.episode_step)
         wandb.log({'episode_number': self.episode_count}, step=self.episode_step)
