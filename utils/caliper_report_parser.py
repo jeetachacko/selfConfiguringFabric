@@ -50,12 +50,23 @@ def parse_caliper_log(episode_step, current_throughput):
         value_read = str(value_read)
         values_read = value_read.split('=')
         succ0test = float(values_read[1].strip())
+        succ1test = float(values_read[3].strip())
+        succ2test = float(values_read[5].strip())
+        succ3test = float(values_read[7].strip())
+        succ4test = float(values_read[9].strip())
+        succ5test = float(values_read[11].strip())
+        succ6test = float(values_read[13].strip())
+        succ7test = float(values_read[15].strip())
+        succ8test = float(values_read[17].strip())
+        succ9test = float(values_read[19].strip())
+        
 
         if (episode_step % 100 == 0):
             throughputtest = current_throughput
 
         #if (episode_step % 100 != 0):
-        while succtest == 0 or succ0test == 0 or (throughputtest < (current_throughput/2)):
+        while succtest == 0 or succ0test == 0 or succ1test == 0 or succ2test == 0 or succ3test == 0 or succ4test == 0 or succ5test == 0 or succ6test == 0 or succ7test == 0 or succ8test == 0 or succ9test == 0:
+        #while succtest == 0 or succ0test == 0 or succ1test == 0 or succ2test == 0 or succ3test == 0 or succ4test == 0 or succ5test == 0 or succ6test == 0 or succ7test == 0 or succ8test == 0 or succ9test == 0 or (throughputtest < (current_throughput/2)):
             print("SUCCESS IS ZERO OR TOO LOW")
             open("/home/ubuntu/hll3_opennebula/parser.txt", 'a').close()
             time.sleep(120)
@@ -84,6 +95,15 @@ def parse_caliper_log(episode_step, current_throughput):
             value_read = str(value_read)
             values_read = value_read.split('=')
             succ0test = float(values_read[1].strip())
+            succ1test = float(values_read[3].strip())
+            succ2test = float(values_read[5].strip())
+            succ3test = float(values_read[7].strip())
+            succ4test = float(values_read[9].strip())
+            succ5test = float(values_read[11].strip())
+            succ6test = float(values_read[13].strip())
+            succ7test = float(values_read[15].strip())
+            succ8test = float(values_read[17].strip())
+            succ9test = float(values_read[19].strip())
 
         
         print(f"LOG EXTRACTED VALUE {value}")

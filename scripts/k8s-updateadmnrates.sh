@@ -19,7 +19,7 @@ tps500=(50 50 50 50 50 50 50 50 50 50)
 
 #!!!!!! COMMENT LEARNEDRATE UPDATE FOR NONBASELINES !!!!!
 echo "STEP COUNT IN UPDATEADMNRATES.SH $1"
-if [[ $1 < 99 ]] && [[ $(($1 % 33)) == 0 ]]; then
+if [[ $1 -lt 99 ]] && [[ $(($1 % 33)) == 0 ]]; then
   echo "Updating real transaction rate of caliper clients"
   >/home/ubuntu/hll3_opennebula/rlupdate.txt
   if [[ $(($1 / 33)) == 1 ]]; then
@@ -131,42 +131,7 @@ actualratearr=($actualrate)
 echo ${actualratearr[@]}
 
 arrlength=${#ratearr[@]}
-#multiplier=$(( 10/100 ))
-
-# 0.5 implies no change, 0 implies 10% decrease, 1 implies 10% increase
-# 10% increase only if new rate is less than actual rate - else no change
-# 10% decrease only if new rate is greater than 70% of actual rate - else no change
- 
-# for (( i=0; i<arrlength; i++ ));
-# do
-#   if [ $i -lt 5 ]; then
-#     index=0
-#   else 
-#     index=1
-#   fi
-#   printf "Index %d RateValue %s DecisionValue %s\n" $i "${ratearr[$i]}" "${decisionarr[$i]}"
-#   if [ ${decisionarr[$index]} == 0 ]; then
-#     decreaselimit=$(( ${actualratearr[$i]} * 70 / 100 ))
-#     tempd=$(( ${ratearr[$i]} - ${ratearr[$i]} / 10 ))
-#     if [ $tempd -gt $decreaselimit ]; then
-#       ratearr[$i]=$tempd
-#     else
-#       ratearr[$i]=$decreaselimit
-#       printf "Least possible value"
-#     fi
-#   elif [ ${decisionarr[$index]} == 1 ]; then
-#     temp=$(( ${ratearr[$i]} + ${ratearr[$i]} / 10 ))
-#     if [ $temp -lt ${actualratearr[$i]} ]; then
-#       ratearr[$i]=$temp
-#     else
-#       ratearr[$i]=${actualratearr[$i]}
-#       printf "Max possible value"
-#     fi
-#   else
-#     printf "No change"
-#   fi
-# done
-
+# $2 = 0.5 implies no change/original rate, 0 implies 20% decrease, 1 implies 30% decrease
 for (( i=0; i<arrlength; i++ ));
 do
   if [ $i -lt 5 ]; then
@@ -176,10 +141,10 @@ do
   fi
   printf "Index %d RateValue %s DecisionValue %s\n" $i "${ratearr[$i]}" "${decisionarr[$i]}"
   if [ ${decisionarr[$index]} == 0 ]; then
-    tempd=$(( ${actualratearr[$i]} * 80 / 100 ))
+    tempd=$(( ${actualratearr[$i]} * 90 / 100 ))
     ratearr[$i]=$tempd
   elif [ ${decisionarr[$index]} == 1 ]; then
-    tempd=$(( ${actualratearr[$i]} * 70 / 100 ))
+    tempd=$(( ${actualratearr[$i]} * 80 / 100 ))
     ratearr[$i]=$tempd
   else
     ratearr[$i]=${actualratearr[$i]}
@@ -207,8 +172,6 @@ pkill -9 -f caliper-manager
 pkill -9 -f caliper-logs.txt
 sleep 90s
 
-#sleep 10s
-#>/home/ubuntu/hll3_opennebula/check.txt
 
 # ======================================================================================================
 

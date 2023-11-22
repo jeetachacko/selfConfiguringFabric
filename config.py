@@ -38,7 +38,7 @@ OBJECTIVE_REWARD_MULTIPLIER=5
 # training config
 EXPECTED_SUCCESSTHROUGHPUT = 1 # default expected throughput
 MAXIMUM_STEPS_PER_EPISODE = 100
-NUMBER_OF_EPISODES = 7
+NUMBER_OF_EPISODES = 4
 
 #LEARNING_RATE = 0.0003
 LEARNING_RATE = 0.0001
@@ -82,6 +82,7 @@ NETWORK_UPDATE_FREQUENCY = 1000
 # client_10 = [0.5,0,1]
 
 #Number of orgs 2
+# # $2 = 0.5 implies no change/original rate, 0 implies 20% decrease, 1 implies 30% decrease
 org_1 = [0.5,0,1]
 org_2 = [0.5,0,1]
 
