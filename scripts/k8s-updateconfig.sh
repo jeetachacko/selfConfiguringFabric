@@ -31,48 +31,17 @@ elif [[ $(($1 % 100)) == 0 ]]; then
   else
     sed -i "s/.*var workloadType.*/          var workloadType = 0/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/getValues.js
   fi
-
-if [[ $1 < 99 ]] && [[ $(($1 % 33)) == 0 ]]; then
-  echo "Updating transaction rate and restarting caliper"
-  >/home/ubuntu/hll3_opennebula/tpsupdate.txt
-  pkill -9 -f ./scripts/caliper_run.sh
-  pkill -9 -f caliper-manager
-  pkill -9 -f caliper-logs.txt
-  sleep 60s
-  while [ -f /home/ubuntu/hll3_opennebula/check_caliper.txt ]
-  do
-    echo "waiting for caliper restart..."
-    sleep 300s
-    echo "Delete check file"
-    rm /home/ubuntu/hll3_opennebula/check_caliper.txt
-  done
-elif [[ $(($1 % 100)) == 0 ]]; then
-  echo "Updating transaction rate and restarting caliper"
-  >/home/ubuntu/hll3_opennebula/tpsupdate.txt
-  pkill -9 -f ./scripts/caliper_run.sh
-  pkill -9 -f caliper-manager
-  pkill -9 -f caliper-logs.txt
-  sleep 60s
-  while [ -f /home/ubuntu/hll3_opennebula/check_caliper.txt ]
-  do
-    echo "waiting for caliper restart..."
-    sleep 300s
-    echo "Delete check file"
-    rm /home/ubuntu/hll3_opennebula/check_caliper.txt
-  done
 fi
 
+# #Comment lines 37 to 43 for baseline
+echo "Updating function type and restarting caliper"
+sed -i "s/.*var functionType.*/          var functionType = $2/" /home/ubuntu/hll3_opennebula/caliper/benchmarks/generator/getValues.js
+>/home/ubuntu/hll3_opennebula/tpsupdate.txt
+pkill -9 -f ./scripts/caliper_run.sh
+pkill -9 -f caliper-manager
+pkill -9 -f caliper-logs.txt
+sleep 60s
 
-./scripts/network_update.sh
-
-# argo logs @latest | grep "max_message_count:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
-# argo logs @latest | grep "preferred_max_bytes:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
-# argo logs @latest | grep "BatchTimeout:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
-# argo logs @latest | grep "snapshot_interval_size:" | tail -1 >> /home/ubuntu/hll3_opennebula/configvars.txt
-# echo "" >> /home/ubuntu/hll3_opennebula/configvars.txt
-
-#sleep 10s
-#>/home/ubuntu/hll3_opennebula/check.txt
 
 while [ -f /home/ubuntu/hll3_opennebula/check.txt ]
 do

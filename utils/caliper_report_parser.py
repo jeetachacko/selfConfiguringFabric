@@ -41,6 +41,7 @@ def parse_caliper_log(episode_step, current_throughput):
             throughputtest = current_throughput
         #if (episode_step % 100 != 0):
         while succtest == 0 or (throughputtest < (current_throughput/2)):
+        #while succtest == 0:
             print("SUCCESS IS ZERO OR TOO LOW")
             open("/home/ubuntu/hll3_opennebula/parser.txt", 'a').close()
             time.sleep(120)

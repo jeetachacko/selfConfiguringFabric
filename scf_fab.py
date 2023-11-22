@@ -31,7 +31,9 @@ def run_scf():
         "learning_rate": config.LEARNING_RATE}
     
     run = wandb.init(project="scf_fab_datalayer", config=wandb_config, monitor_gym=True, save_code=True, dir=log_dir)
-    # Instantiate the agent
+
+    #Comment when reusing existing model
+    #===============================
     model = DQN(
         MlpPolicy,
         env,
@@ -41,11 +43,15 @@ def run_scf():
         exploration_fraction=config.EXPLORATION_FRACTION,
         buffer_size =  config.BUFFER_SIZE,
         batch_size = config.BATCH_SIZE, 
-        #prioritized_replay = config.PRIORITIZED_REPLAY, 
-        #target_network_update_freq = config.NETWORK_UPDATE_FREQUENCY,
-        #tensorboard_log=log_dir,
     )
+    #===============================
 
+    #reusing existing model (Comment when creating new model)
+    #===============================
+    # model_path = f"/home/ubuntu/nilm/temp/chacko/scf_exps_datalayer/models/cwjxdptq/model.zip"
+    # model = DQN.load(model_path)
+    # model.set_env(env)    
+    #===============================
    
 
     #env.reset(seed=None)
