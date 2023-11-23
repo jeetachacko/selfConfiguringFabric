@@ -37,23 +37,32 @@ def parse_caliper_log(episode_step, current_throughput):
         values = value.split('|')
         succtest = float(values[2].strip())
         throughputtest = float(values[8].strip())
-        if (episode_step % 100 != 0):
-            while succtest == 0 or (throughputtest < (current_throughput/2)):
-                print("SUCCESS IS ZERO OR TOO LOW")
-                open("/home/ubuntu/hll3_opennebula/parser.txt", 'a').close()
-                time.sleep(120)
-                command = f"cat /home/ubuntu/hll3_opennebula/caliper/caliper-logs.txt | grep '| common |' | tail -1"
-                update_process = subprocess.Popen(
-                    [command],
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.DEVNULL,
-                )
-                value, err = update_process.communicate()
-                value = str(value)
-                values = value.split('|')
-                succtest = float(values[2].strip())
-                throughputtest = float(values[8].strip())
+        if (episode_step % 100 == 0):
+            throughputtest = current_throughput
+        #if (episode_step % 100 != 0):
+        counter = 0
+        while succtest == 0 or (throughputtest < (current_throughput/2)):
+            counter += 1
+            print("SUCCESS IS ZERO OR TOO LOW")
+            print(f"current_throughput {current_throughput}")
+            open("/home/ubuntu/hll3_opennebula/parser.txt", 'a').close()
+            time.sleep(120)
+            command = f"cat /home/ubuntu/hll3_opennebula/caliper/caliper-logs.txt | grep '| common |' | tail -1"
+            update_process = subprocess.Popen(
+                [command],
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+            )
+            value, err = update_process.communicate()
+            value = str(value)
+            values = value.split('|')
+            succtest = float(values[2].strip())
+            throughputtest = float(values[8].strip())
+            print(f"throughputtest {throughputtest}")
+            print(f"succtest {succtest}")
+            if counter == 5:
+                break
 
         
         print(f"LOG EXTRACTED VALUE {value}")
