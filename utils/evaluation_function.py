@@ -9,7 +9,10 @@ from config import MOVE_PENALTY
 def relative_successthroughput_reward(curr_state):
     #return (round(curr_state[0] + (curr_state[5] / 1000), 2))
     #return (round(((curr_state[0] * curr_state[5]) / 500), 2))
-    return (round((curr_state[0] / curr_state[1]), 2))  #successthroughput/sendrate
+    if curr_state[0] == 0 or curr_state[1] == 0:
+        return 0
+    else:
+        return (round((curr_state[0] / curr_state[1]), 2))  #successthroughput/sendrate
     
 
 # def throughput_reward(curr_state, next_state):

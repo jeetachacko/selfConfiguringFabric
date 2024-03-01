@@ -46,12 +46,12 @@ def run_scf():
     )
     #===============================
 
-    #reusing existing model (Comment when creating new model)
-    #===============================
-    # model_path = f"/home/ubuntu/nilm/temp/chacko/scf_exps_datalayer/models/cwjxdptq/model.zip"
+    # ##reusing existing model (Comment when creating new model)
+    # ##===============================
+    # model_path = f"/home/ubuntu/nilm/temp/chacko/scf_exps_datalayer/models/n7jqks6y/model.zip"
     # model = DQN.load(model_path)
     # model.set_env(env)    
-    #===============================
+    # ##===============================
    
 
     #env.reset(seed=None)
